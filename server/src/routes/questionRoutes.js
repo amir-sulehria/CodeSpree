@@ -14,4 +14,6 @@ router
   .patch(questionController.updateQuestion)
   .delete(questionController.deleteQuestion);
 
+router.post("/api/run", questionController.runCode);
+
 module.exports = router;

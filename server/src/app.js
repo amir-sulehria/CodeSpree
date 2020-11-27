@@ -6,11 +6,13 @@ const testRouter = require("./routes/testRoutes");
 const questionRouter = require("./routes/questionRoutes");
 const submissionRouter = require("./routes/submissionRoutes");
 const AppError = require("./utils/appError");
+const cors = require("cors");
 const errorHandler = require("./middlewares/errorHandler");
 
 const app = express();
 app.use(json());
 
+app.use(cors());
 app.use(authRouter);
 app.use(testRouter);
 app.use(questionRouter);

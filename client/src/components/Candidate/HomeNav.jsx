@@ -1,8 +1,11 @@
 import React from "react";
-import { Nav, Navbar, NavDropdown } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Button, Nav, Navbar, NavDropdown } from "react-bootstrap";
+import { Link, useHistory } from "react-router-dom";
+import axios from "axios";
+import Cookie from "js-cookie";
 
 const Navigation = () => {
+  const history = useHistory();
   return (
     <Navbar
       style={{ fontSize: "1.5em" }}
@@ -21,14 +24,24 @@ const Navigation = () => {
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto"></Nav>
         <Nav>
-          <Nav.Link style={{ paddingRight: "1em" }} as={Link} to="/practice">
+          <Nav.Link style={{ paddingRight: "1em" }} as={Link} to="/test">
             Practice
           </Nav.Link>
           <Nav.Link style={{ paddingRight: "1em" }} as={Link} to="/rankings">
             Rankings
           </Nav.Link>
-          <Nav.Link as={Link} to="/certificates">
-            Certifications
+          <Nav.Link style={{ paddingRight: "1em" }} as={Link} to="/profile">
+            Profile
+          </Nav.Link>
+          <Nav.Link
+            style={{ paddingRight: "1em" }}
+            onClick={() => {
+              axios.get("http://localhost:4000/api/users/signout");
+              Cookie.remove("token");
+              history.push("/");
+            }}
+          >
+            Logout
           </Nav.Link>
         </Nav>
       </Navbar.Collapse>

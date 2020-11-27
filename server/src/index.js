@@ -9,6 +9,7 @@ const start = async () => {
   const dbURL = process.env.DB_URL;
 
   if (!PORT || !dbURL) {
+    console.log("env problem");
     throw new Error("Env variables missing");
   }
 

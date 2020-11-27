@@ -7,7 +7,7 @@ export default function GeneralLayout(props) {
     <>
       <Navigation />
       {props.children}
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }

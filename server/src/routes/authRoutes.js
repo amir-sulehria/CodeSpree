@@ -5,7 +5,9 @@ const userController = require("../controller/userController");
 const authRouter = Router();
 
 authRouter.post("/api/users/signup", authController.signup);
+authRouter.get("/api/users/checkauth", authController.isAuthenticated);
 authRouter.post("/api/users/signin", authController.login);
+authRouter.post("/api/staff/signin", authController.login);
 authRouter.get("/api/users/signout", authController.signout);
 authRouter.post("/api/users/signin", authController.forgotPassword);
 authRouter.post("/api/users/signout", authController.resetPassword);
