@@ -83,6 +83,7 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
+  const userId = req.params;
   const { authorization } = req.headers;
   let token;
 
@@ -103,13 +104,8 @@ exports.protect = catchAsync(async (req, res, next) => {
   // 3) Check if user still exists
   const currentUser = await User.findById(decoded.id);
 
-  if (!currentUser) {
-    return next(
-      new AppError(
-        "The user belonging to this token does no longer exists!",
-        401
-      )
-    );
+  if (!currentUser || currentUser.role != "admin") {
+    return next(new AppError("You don't have permission to delete", 401));
   }
 
   // 4) Check if user changed password after the token was issued

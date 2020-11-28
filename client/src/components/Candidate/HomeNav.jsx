@@ -30,6 +30,9 @@ const Navigation = () => {
           <Nav.Link style={{ paddingRight: "1em" }} as={Link} to="/rankings">
             Rankings
           </Nav.Link>
+          <Nav.Link style={{ paddingRight: "1em" }} as={Link} to="/inbox">
+            Inbox
+          </Nav.Link>
           <Nav.Link style={{ paddingRight: "1em" }} as={Link} to="/profile">
             Profile
           </Nav.Link>

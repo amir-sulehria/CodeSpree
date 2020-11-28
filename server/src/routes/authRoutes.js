@@ -25,7 +25,7 @@ authRouter.patch(
 );
 
 authRouter.delete(
-  "/api/users/delete-me",
+  "/api/users/delete/:id",
   authController.protect,
   userController.deleteMe
 );
@@ -40,5 +40,8 @@ authRouter
   .get(userController.getUser)
   .patch(userController.updateUser)
   .delete(userController.deleteUser);
+
+authRouter.patch("/admin/user/notify/:id", userController.notifyUser);
+authRouter.get("/api/users/inbox/:id", userController.getUser);
 
 module.exports = authRouter;

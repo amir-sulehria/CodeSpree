@@ -8,6 +8,7 @@ import {
 import CLogin from "./components/Login";
 import SLogin from "./components/Staff/Login";
 import AdminDB from "./components/Staff/AdminDB";
+import UsersData from "./components/Staff/UsersData";
 import ExaminerDB from "./components/Staff/ExaminerDB";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "./style.css";
@@ -20,6 +21,8 @@ import Profile from "./components/Candidate/Profile";
 import UserPrivateRoute from "./UserPrivateRoute";
 import AdminPrivateRoute from "./AdminPrivateRoute";
 import StaffPrivateRoute from "./StaffPrivateRoute";
+import ExaminerData from "./components/Staff/ExaminerData";
+import Inbox from "./components/Candidate/Inbox";
 
 const App = () => {
   return (
@@ -30,7 +33,10 @@ const App = () => {
         <Route path="/register" exact component={Register} />
         <Route path="/cs-staff" exact component={SLogin} />
         <UserPrivateRoute path="/dashboard" exact component={Dashboard} />
+        <UserPrivateRoute path="/inbox" exact component={Inbox} />
         <AdminPrivateRoute path="/admin/dashboard" exact component={AdminDB} />
+        <AdminPrivateRoute path="/admin/users" exact component={UsersData} />
+        <AdminPrivateRoute path="/admin/staff" exact component={ExaminerData} />
         <StaffPrivateRoute
           path="/examiner/dashboard"
           exact

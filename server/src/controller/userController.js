@@ -2,6 +2,7 @@ const User = require(".././model/User");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const factory = require("./handlerFactory");
+const APIFeatures = require("../utils/apiFeautures");
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -16,13 +17,26 @@ const filterObj = (obj, ...allowedFields) => {
 };
 
 exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
-
+  const features = await new APIFeatures(User.find(), req.query).filter();
+  const users = await features.query;
   // Send response
   res.status(200).json({
     status: "success",
     results: users.length,
     data: { users },
+  });
+});
+
+exports.notifyUser = catchAsync(async (req, res, next) => {
+  const updatedUser = await User.findById(req.params.id);
+  if (updatedUser) {
+    await updatedUser.updateOne({ inbox: req.body.message });
+    await updatedUser.save();
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: updatedUser,
   });
 });
 
@@ -55,7 +69,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteMe = catchAsync(async (req, res, next) => {
-  await User.findByIdAndUpdate(req.user.id, { active: false });
+  await User.findByIdAndUpdate(req.params.id, { active: false });
 
   res.status(204).json({
     status: "success",
@@ -63,12 +77,14 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getUser = (req, res) => {
-  res.status(500).json({
-    status: "error",
-    message: "This route is not yet defined!",
+exports.getUser = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  // Send response
+  res.status(200).json({
+    status: "success",
+    data: user,
   });
-};
+});
 
 exports.createUser = (req, res) => {
   res.status(500).json({

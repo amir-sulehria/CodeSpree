@@ -55,6 +55,10 @@ const userSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       default: null,
     },
+    inbox: {
+      type: String,
+      default: null,
+    },
   },
   {
     toJSON: {

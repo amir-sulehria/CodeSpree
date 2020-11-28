@@ -24,13 +24,13 @@ const Navigation = () => {
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto"></Nav>
         <Nav>
-          <Nav.Link style={{ paddingRight: "1em" }} as={Link} to="/user">
+          <Nav.Link style={{ paddingRight: "1em" }} as={Link} to="/admin/users">
             Users
           </Nav.Link>
-          <Nav.Link style={{ paddingRight: "1em" }} as={Link} to="/examiner">
+          <Nav.Link style={{ paddingRight: "1em" }} as={Link} to="/admin/staff">
             Examiners
           </Nav.Link>
-          <Nav.Link style={{ paddingRight: "1em" }} as={Link} to="/test">
+          <Nav.Link style={{ paddingRight: "1em" }} as={Link} to="/admin/test">
             Tests
           </Nav.Link>
           <Nav.Link style={{ paddingRight: "1em" }} as={Link} to="/tasks">
