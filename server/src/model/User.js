@@ -3,6 +3,34 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 
+const task = new mongoose.Schema(
+  {
+    taskMsg: {
+      type: String,
+    },
+    deadline: {
+      type: Date,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now(),
+    },
+  },
+  { _id: false }
+);
+const message = new mongoose.Schema(
+  {
+    msg: {
+      type: String,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now(),
+    },
+  },
+  { _id: false }
+);
+
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -25,7 +53,6 @@ const userSchema = new mongoose.Schema(
     },
     passwordConfirm: {
       type: String,
-      required: [true, "Please confirm your password"],
       validate: {
         // This only works on CREATE and SAVE
         validator: function (el) {
@@ -51,14 +78,8 @@ const userSchema = new mongoose.Schema(
       default:
         "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png",
     },
-    upcomingTask: {
-      type: mongoose.Schema.ObjectId,
-      default: null,
-    },
-    inbox: {
-      type: String,
-      default: null,
-    },
+    upcomingTasks: [task],
+    inbox: [message],
   },
   {
     toJSON: {

@@ -8,8 +8,15 @@ const testSchema = new mongoose.Schema(
     },
     date: {
       type: Date,
-      default: Date.now(),
+      required: [true, "Date is required"],
     },
+    registeredUsers: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+    ],
+
     questions: [
       {
         type: mongoose.Schema.ObjectId,

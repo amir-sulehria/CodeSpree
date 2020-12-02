@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Table } from "react-bootstrap";
 import HomeLayout from "../../layouts/HomeLayout";
+import ExaminerLayout from "../../layouts/ExaminerLayout";
 import axios from "axios";
 import Cookie from "js-cookie";
 import jwt_decode from "jwt-decode";
 
-export default function Inbox() {
-  const [data, setData] = useState("");
+export default function Inbox(props) {
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -17,43 +18,64 @@ export default function Inbox() {
       axios
         .get(`http://localhost:4000/api/users/inbox/${id}`)
         .then((response) => {
-          //   setData(response.data.data.user);
+          return response.data.data.inbox;
+        })
+        .then((data) => {
+          data.sort((a, b) =>
+            new Date(a.createdAt) < new Date(b.createdAt) ? 1 : -1
+          );
           setLoading(false);
-          setData(response.data.data.inbox);
+          setData(data);
         });
     }
   }, []);
 
   if (loading) {
     return (
-      <div class="d-flex justify-content-center">
-        <div class="spinner-border" role="status">
-          <span class="sr-only">Loading...</span>
+      <div className="d-flex justify-content-center">
+        <div className="spinner-border" role="status">
+          <span className="sr-only">Loading...</span>
         </div>
       </div>
     );
   }
 
-  return (
-    <HomeLayout>
-      <div className="container" style={{ paddingTop: "3em" }}>
-        <Table striped bordered hover variant="dark">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Inbox</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data ? (
+  const getDate = (date) => {
+    const update = new Date(date);
+    return (
+      <p>
+        {update.getHours()}:{update.getMinutes()}
+        {"\t"}
+        {update.getDate()}/{update.getMonth()}/{update.getFullYear()}
+      </p>
+    );
+  };
+
+  const inboxComp = (
+    <div className="container" style={{ paddingTop: "3em" }}>
+      <Table striped bordered hover variant="dark">
+        <thead>
+          <tr>
+            <th>Inbox</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((d) => {
+            return (
               <tr>
-                <th scope="row">{1}</th>
-                <td>{data}</td>
+                <td>{d.msg}</td>
+                <td>{getDate(d.createdAt)}</td>
               </tr>
-            ) : null}
-          </tbody>
-        </Table>
-      </div>
-    </HomeLayout>
+            );
+          })}
+        </tbody>
+      </Table>
+    </div>
+  );
+
+  return props.role === "user" ? (
+    <HomeLayout>{inboxComp}</HomeLayout>
+  ) : (
+    <ExaminerLayout>{inboxComp}</ExaminerLayout>
   );
 }

@@ -1,39 +1,68 @@
 const mongoose = require("mongoose");
 
-const testCase = new mongoose.Schema(
-  {
-    type: {
-      type: String,
-    },
-    stdin: {
-      type: String,
-    },
-    expectedOutput: {
-      type: String,
-    },
-  },
-  {
-    toJSON: {
-      transform(doc, ret) {
-        ret.id = ret._id;
-        delete ret._id;
-        delete ret.password;
-        delete ret.__v;
-      },
-    },
-  }
-);
-
 const questionsSchema = new mongoose.Schema(
   {
     statement: {
       type: String,
-      required: true,
+      required: [true, "Statement is required"],
     },
-    testCases: [testCase],
-    alottedMarks: {
+    type: {
+      type: String,
+    },
+    category: {
+      type: String,
+    },
+    stdinType: {
+      type: String,
+      required: [true, "Input type is required"],
+    },
+    marks: {
       type: Number,
-      required: [true, "Question must have marks"],
+      default: 5,
+    },
+    solW: {
+      type: Number,
+      default: 100,
+    },
+    testC1In: {
+      type: String,
+    },
+    testC1Out: {
+      type: String,
+    },
+    testC2In: {
+      type: String,
+    },
+    testC2Out: {
+      type: String,
+    },
+    testC3In: {
+      type: String,
+    },
+    testC3Out: {
+      type: String,
+    },
+    sampleIn: {
+      type: String,
+    },
+    sampleOut: {
+      type: String,
+    },
+    socW: {
+      type: Number,
+    },
+    subT: {
+      type: Number,
+    },
+    locW: {
+      type: Number,
+    },
+    locT: {
+      type: Number,
+    },
+    madeBy: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
     },
   },
   {

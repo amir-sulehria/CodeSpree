@@ -27,13 +27,34 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.notifyUser = catchAsync(async (req, res, next) => {
-  const updatedUser = await User.findById(req.params.id);
-  if (updatedUser) {
-    await updatedUser.updateOne({ inbox: req.body.message });
-    await updatedUser.save();
-  }
+exports.sendTask = catchAsync(async (req, res, next) => {
+  // const updatedUser = await User.findById(req.params.id);
+  const updatedUser = await User.findByIdAndUpdate(
+    { _id: req.params.id },
+    {
+      $push: { upcomingTasks: req.body },
+    }
+  );
+  // await updatedUser.inbox.push(req.body.message);
+  // await updatedUser
+  await updatedUser.save();
+  res.status(200).json({
+    status: "success",
+    data: updatedUser,
+  });
+});
 
+exports.notifyUser = catchAsync(async (req, res, next) => {
+  // const updatedUser = await User.findById(req.params.id);
+  const updatedUser = await User.findByIdAndUpdate(
+    { _id: req.params.id },
+    {
+      $push: { inbox: req.body },
+    }
+  );
+  // await updatedUser.inbox.push(req.body.message);
+  // await updatedUser
+  await updatedUser.save();
   res.status(200).json({
     status: "success",
     data: updatedUser,
@@ -78,11 +99,22 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
 });
 
 exports.getUser = catchAsync(async (req, res, next) => {
-  const user = await User.findById(req.params.id);
+  const inbox = await User.findById(req.params.id).select("inbox");
   // Send response
+
   res.status(200).json({
     status: "success",
-    data: user,
+    data: inbox,
+  });
+});
+
+exports.getTasks = catchAsync(async (req, res, next) => {
+  const inbox = await User.findById(req.params.id).select("upcomingTasks");
+  // Send response
+
+  res.status(200).json({
+    status: "success",
+    data: inbox,
   });
 });
 

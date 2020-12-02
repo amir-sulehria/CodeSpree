@@ -33,8 +33,12 @@ const Navigation = () => {
           <Nav.Link style={{ paddingRight: "1em" }} as={Link} to="/admin/test">
             Tests
           </Nav.Link>
-          <Nav.Link style={{ paddingRight: "1em" }} as={Link} to="/tasks">
-            Tasks
+          <Nav.Link
+            style={{ paddingRight: "1em" }}
+            as={Link}
+            to="/admin/profile"
+          >
+            Profile
           </Nav.Link>
           <Nav.Link
             style={{ paddingRight: "1em" }}

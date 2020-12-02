@@ -24,11 +24,19 @@ const ExaminerNav = () => {
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto"></Nav>
         <Nav>
-          <Nav.Link style={{ paddingRight: "1em" }} as={Link} to="/user">
+          <Nav.Link
+            style={{ paddingRight: "1em" }}
+            as={Link}
+            to="/examiner/questions"
+          >
             Questions
           </Nav.Link>
-          <Nav.Link style={{ paddingRight: "1em" }} as={Link} to="/examiner">
-            Requests
+          <Nav.Link
+            style={{ paddingRight: "1em" }}
+            as={Link}
+            to="/examiner/inbox"
+          >
+            Inbox
           </Nav.Link>
           <Nav.Link
             style={{ paddingRight: "1em" }}

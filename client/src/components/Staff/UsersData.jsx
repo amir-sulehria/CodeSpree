@@ -1,17 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { Alert, FormControl, InputGroup, Modal, Button } from "react-bootstrap";
+import {
+  Alert,
+  FormControl,
+  InputGroup,
+  Modal,
+  Button,
+  Form,
+} from "react-bootstrap";
 import AdminLayout from "../../layouts/AdminLayout";
 import axios from "axios";
 import Cookie from "js-cookie";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
-export default function UsersData() {
+export default function UsersData(props) {
   const [show, setShow] = useState(false);
+  const [tshow, setTShow] = useState();
   const [message, setMessage] = useState("");
   const [data, setData] = useState({ users: [] });
   const [loading, setLoading] = useState(true);
+  const [startDate, setStartDate] = useState(new Date());
 
   useEffect(() => {
-    axios.get("http://localhost:4000/api/users?role=user").then((response) => {
+    axios.get(props.url).then((response) => {
       setData(response.data.data.users);
       setLoading(false);
     });
@@ -28,12 +39,17 @@ export default function UsersData() {
   }
   console.log(data);
 
-  const handleNotify = () => {
-    setShow(true);
-  };
-
-  const handleClose = () => {
-    setShow(false);
+  const handleTask = async (id) => {
+    const token = Cookie.get("token");
+    if (token) {
+      const res = await axios.patch(
+        `http://localhost:4000/admin/user/task/${id}`,
+        { taskMsg: message, deadline: startDate, createdAt: Date.now() }
+      );
+      if (res.status === 200) {
+        setTShow(false);
+      }
+    }
   };
 
   const handleMessage = async (id) => {
@@ -41,9 +57,7 @@ export default function UsersData() {
     if (token) {
       const res = await axios.patch(
         `http://localhost:4000/admin/user/notify/${id}`,
-        {
-          message,
-        }
+        { msg: message, createdAt: Date.now() }
       );
       if (res.status === 200) {
         setShow(false);
@@ -72,7 +86,7 @@ export default function UsersData() {
   return (
     <AdminLayout>
       <Alert variant="success">
-        <Alert.Heading>List of all registered Candidates</Alert.Heading>
+        <Alert.Heading>List of all registered {props.role}</Alert.Heading>
       </Alert>
 
       <div className="container">
@@ -97,12 +111,12 @@ export default function UsersData() {
                     </td>
                     <td>
                       <button
-                        className="btn btn-sm btn-info"
-                        onClick={handleNotify}
+                        className="btn btn-sm btn-primary"
+                        onClick={() => setShow(true)}
                       >
-                        Notify
+                        Message
                       </button>
-                      <Modal show={show} onHide={handleClose}>
+                      <Modal show={show} onHide={() => setShow(false)}>
                         <Modal.Header closeButton>
                           <Modal.Title>Enter message</Modal.Title>
                         </Modal.Header>
@@ -123,6 +137,44 @@ export default function UsersData() {
                               </Button>
                             </InputGroup.Append>
                           </InputGroup>
+                        </Modal.Body>
+                      </Modal>
+                    </td>
+                    <td>
+                      <button
+                        className="btn btn-sm btn-info"
+                        onClick={() => setTShow(true)}
+                      >
+                        Notify
+                      </button>
+                      <Modal show={tshow} onHide={() => setTShow(false)}>
+                        <Modal.Header closeButton>
+                          <Modal.Title>Enter your message</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                          <InputGroup className="mb-3">
+                            <FormControl
+                              onChange={(e) => setMessage(e.target.value)}
+                              placeholder="Enter message"
+                              aria-label="message area"
+                              aria-describedby="basic-addon2"
+                            />
+                          </InputGroup>
+                          <InputGroup className="mb-3">
+                            <Form.Label>Deadline{":  "}</Form.Label>
+
+                            <DatePicker
+                              selected={startDate}
+                              onChange={(date) => setStartDate(date)}
+                            />
+                          </InputGroup>
+
+                          <Button
+                            variant="primary"
+                            onClick={() => handleTask(item.id)}
+                          >
+                            Send
+                          </Button>
                         </Modal.Body>
                       </Modal>
                     </td>

@@ -3,6 +3,7 @@ const catchAsync = require("./../utils/catchAsync");
 
 exports.createTest = catchAsync(async (req, res, next) => {
   const newTest = await Test.create(req.body);
+  await newTest.save();
   res.status(201).json(newTest);
 });
 

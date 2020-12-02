@@ -20,7 +20,7 @@ authRouter.patch(
 
 authRouter.patch(
   "/api/users/update-me",
-  authController.protect,
+  // authController.protect,
   userController.updateMe
 );
 
@@ -42,6 +42,8 @@ authRouter
   .delete(userController.deleteUser);
 
 authRouter.patch("/admin/user/notify/:id", userController.notifyUser);
+authRouter.patch("/admin/user/task/:id", userController.sendTask);
+authRouter.get("/api/user/tasks/:id", userController.getTasks);
 authRouter.get("/api/users/inbox/:id", userController.getUser);
 
 module.exports = authRouter;

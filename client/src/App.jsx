@@ -21,8 +21,12 @@ import Profile from "./components/Candidate/Profile";
 import UserPrivateRoute from "./UserPrivateRoute";
 import AdminPrivateRoute from "./AdminPrivateRoute";
 import StaffPrivateRoute from "./StaffPrivateRoute";
-import ExaminerData from "./components/Staff/ExaminerData";
 import Inbox from "./components/Candidate/Inbox";
+import InvigSys from "./components/Candidate/InvigSys";
+import TestData from "./components/Staff/TestData";
+import CreateTest from "./components/Staff/CreateTest";
+import QuestionData from "./components/Staff/QuestionData";
+import CreateQues from "./components/Staff/CreateQues";
 
 const App = () => {
   return (
@@ -33,18 +37,60 @@ const App = () => {
         <Route path="/register" exact component={Register} />
         <Route path="/cs-staff" exact component={SLogin} />
         <UserPrivateRoute path="/dashboard" exact component={Dashboard} />
-        <UserPrivateRoute path="/inbox" exact component={Inbox} />
+        <UserPrivateRoute
+          path="/inbox"
+          exact
+          component={(props) => <Inbox {...props} role="user" />}
+        />
         <AdminPrivateRoute path="/admin/dashboard" exact component={AdminDB} />
-        <AdminPrivateRoute path="/admin/users" exact component={UsersData} />
-        <AdminPrivateRoute path="/admin/staff" exact component={ExaminerData} />
+        <AdminPrivateRoute path="/admin/test" exact component={TestData} />
+        <AdminPrivateRoute
+          path="/admin/test/create"
+          exact
+          component={CreateTest}
+        />
+        <AdminPrivateRoute
+          path="/admin/users"
+          exact
+          component={(props) => (
+            <UsersData
+              {...props}
+              url="http://localhost:4000/api/users?role=user"
+              role="Users"
+            />
+          )}
+        />
+        <AdminPrivateRoute
+          path="/admin/staff"
+          exact
+          component={(props) => (
+            <UsersData
+              {...props}
+              url="http://localhost:4000/api/users?role=staff"
+              role={"Examiners"}
+            />
+          )}
+        />
         <StaffPrivateRoute
           path="/examiner/dashboard"
           exact
           component={ExaminerDB}
         />
+        <StaffPrivateRoute
+          path="/examiner/questions"
+          exact
+          component={QuestionData}
+        />
+        <StaffPrivateRoute path="/examiner/inbox" exact component={Inbox} />
+        <StaffPrivateRoute
+          path="/examiner/questions/create"
+          exact
+          component={CreateQues}
+        />
         <UserPrivateRoute path="/test" exact component={Test} />
         <UserPrivateRoute path="/rankings" exact component={Rankings} />
         <UserPrivateRoute path="/profile" exact component={Profile} />
+        <UserPrivateRoute path="/system-check" exact component={InvigSys} />
       </Switch>
     </Router>
   );
