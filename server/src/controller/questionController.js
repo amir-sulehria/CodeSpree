@@ -8,7 +8,7 @@ exports.createQuestion = catchAsync(async (req, res, next) => {
   res.status(201).json(newQues);
 });
 
-exports.getAllQuestions = catchAsync(async (req, res, next) => {
+exports.getQuestion = catchAsync(async (req, res, next) => {
   const id = req.params.id;
   const questions = await Question.find({ madeBy: id });
 
@@ -18,6 +18,17 @@ exports.getAllQuestions = catchAsync(async (req, res, next) => {
     data: questions,
   });
 });
+
+exports.getAllQuestions = catchAsync(async (req, res, next) => {
+  const questions = await Question.find();
+
+  // Send response
+  res.status(200).json({
+    status: "success",
+    data: questions,
+  });
+});
+
 exports.runCode = catchAsync(async (req, res, next) => {
   request(
     {

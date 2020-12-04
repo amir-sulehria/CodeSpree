@@ -6,11 +6,11 @@ const router = Router();
 
 router.post("/api/question/create", questionController.createQuestion);
 
-router.route("/api/questions/:id").get(questionController.getAllQuestions);
+router.route("/api/questions/:id").get(questionController.getQuestion);
+router.route("/api/questions").get(questionController.getAllQuestions);
 
 router
   .route("/api/questions/Question/:id")
-  .get(questionController.getQuestion)
   .patch(questionController.updateQuestion)
   .delete(questionController.deleteQuestion);
 

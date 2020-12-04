@@ -1,49 +1,44 @@
 const mongoose = require("mongoose");
 
-const testCase = new mongoose.Schema(
+const answers = new mongoose.Schema(
   {
-    type: {
+    questionId: {
+      type: mongoose.Schema.ObjectId,
+    },
+    statement: {
       type: String,
     },
-    stdin: {
+    startedAt: {
+      type: Date,
+    },
+    submittedAt: {
+      type: Date,
+      default: Date.now(),
+    },
+    timeTaken: {
+      type: Number,
+    },
+    lineOfCode: {
+      type: Number,
+    },
+    code: {
       type: String,
     },
-    expectedOutput: {
+    tcOneOut: {
       type: String,
     },
-    generatedOutput: {
+    tcTwoOut: {
       type: String,
-      default: null,
+    },
+    tcThreeOut: {
+      type: String,
+    },
+    marksObtained: {
+      type: Number,
     },
   },
-  {
-    toJSON: {
-      transform(doc, ret) {
-        ret.id = ret._id;
-        delete ret._id;
-        delete ret.password;
-        delete ret.__v;
-      },
-    },
-  }
+  { _id: false }
 );
-
-const answers = new mongoose.Schema({
-  questionId: {
-    type: mongoose.Schema.ObjectId,
-  },
-  statement: {
-    type: String,
-  },
-  submittedAt: {
-    type: Date,
-    default: Date.now(),
-  },
-  testCases: [testCase],
-  marksObtained: {
-    type: Number,
-  },
-});
 
 const submissionSchema = new mongoose.Schema(
   {
@@ -68,6 +63,14 @@ const submissionSchema = new mongoose.Schema(
     },
   }
 );
+
+answers.pre("save", async function (next) {
+  this.timeTaken = Math.ceil(
+    (this.submittedAt.getTime() - this.startedAt.getTime()) / 1000
+  );
+
+  next();
+});
 
 const Submission = mongoose.model("Submission", submissionSchema);
 

@@ -16,7 +16,17 @@ exports.getAllSubmissions = catchAsync(async (req, res, next) => {
     data: { submissions },
   });
 });
+
 exports.getSubmission = catchAsync(async (req, res, next) => {});
+
+exports.addAnswer = catchAsync(async (req, res, next) => {
+  const submission = await Submission.findById(req.params.id);
+  await submission.answers.push(req.body);
+  await submission.save();
+
+  res.status(201).json(submission);
+});
+
 exports.updateSubmission = catchAsync(async (req, res, next) => {
   const submission = await Submission.findById(req.params.id);
   submission.answers.push(req.body);

@@ -5,7 +5,12 @@ const router = Router();
 
 router.post("/api/test/create", testController.createTest);
 
-router.route("/api/tests/:id").get(testController.getAllTests);
+router.route("/api/tests").get(testController.getAllTests);
+router.route("/api/user/upcomingtests").get(testController.getUpcomingTests);
+
+router.patch("/api/test/:id/addquestions", testController.addQuestions);
+
+router.patch("/api/test/register/:id", testController.registerCandidate);
 
 router
   .route("/api/tests/test/:id")
