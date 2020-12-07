@@ -6,8 +6,9 @@ const router = Router();
 
 router.post("/api/question/create", questionController.createQuestion);
 
-router.route("/api/questions/:id").get(questionController.getQuestion);
 router.route("/api/questions").get(questionController.getAllQuestions);
+router.route("/api/questions/:id").get(questionController.getQuestionByMaker);
+router.route("/api/question/:id").get(questionController.getQuestionById);
 
 router
   .route("/api/questions/Question/:id")

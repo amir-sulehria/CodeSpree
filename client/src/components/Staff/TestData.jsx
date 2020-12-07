@@ -1,10 +1,60 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useState } from "react";
 import { Alert } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import AdminLayout from "../../layouts/AdminLayout";
+import axios from "axios";
 
 export default function MakeTest() {
   const history = useHistory();
+
+  const [tests, setTests] = useState([]);
+  const [loading, setLoading] = useState([]);
+
+  const getDate = (date) => {
+    const update = new Date(date);
+    return (
+      <p>
+        {update.getDate()}/{update.getMonth()}/{update.getFullYear()}
+      </p>
+    );
+  };
+
+  useEffect(() => {
+    axios.get("http://localhost:4000/api/tests").then((response) => {
+      setTests(response.data.data.tests);
+      setLoading(false);
+    });
+
+    axios
+      .get(`http://localhost:4000/api/tests`)
+      .then((response) => {
+        return response.data.data.tests;
+      })
+      .then((data) => {
+        if (data.length > 1) {
+          data.sort((a, b) =>
+            new Date(a.createdAt) < new Date(b.createdAt) ? 1 : -1
+          );
+          setLoading(false);
+          setTests(data);
+        } else {
+          setLoading(false);
+          setTests(data);
+        }
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <AdminLayout>
       <Alert variant="success">
@@ -29,21 +79,23 @@ export default function MakeTest() {
                   <th scope="col">#</th>
                   <th scope="col">Name</th>
                   <th scope="col">Date</th>
-                  <th scope="col">Status</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <th scope="row">1</th>
-                  <td>Nov Hackathon</td>
-                  <td>Nov2020</td>
-                  <td>Pending</td>
-                  <td>
-                    <button className="btn btn-sm btn-primary">
-                      View Results
-                    </button>
-                  </td>
-                </tr>
+                {tests.map((d, i) => {
+                  return (
+                    <tr>
+                      <th scope="row">{i + 1}</th>
+                      <td>{d.name}</td>
+                      <td>{getDate(d.date)}</td>
+                      <td>
+                        <button className="btn btn-sm btn-primary">
+                          View Results
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

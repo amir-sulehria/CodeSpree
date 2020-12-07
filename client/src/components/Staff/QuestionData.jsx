@@ -15,17 +15,23 @@ export default function QuestionData() {
   useEffect(() => {
     const token = Cookie.get("token");
     const id = jwt_decode(token);
+
     axios
       .get(`http://localhost:4000/api/questions/${id.id}`)
       .then((response) => {
         return response.data.data;
       })
       .then((data) => {
-        data.sort((a, b) =>
-          new Date(a.createdAt) < new Date(b.createdAt) ? 1 : -1
-        );
-        setLoading(false);
-        setData(data);
+        if (data.length > 1) {
+          data.sort((a, b) =>
+            new Date(a.createdAt) < new Date(b.createdAt) ? 1 : -1
+          );
+          setLoading(false);
+          setData(data);
+        } else {
+          setLoading(false);
+          setData(data);
+        }
       });
   }, []);
 

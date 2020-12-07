@@ -8,14 +8,27 @@ exports.createQuestion = catchAsync(async (req, res, next) => {
   res.status(201).json(newQues);
 });
 
-exports.getQuestion = catchAsync(async (req, res, next) => {
+exports.getQuestionByMaker = catchAsync(async (req, res, next) => {
   const id = req.params.id;
+  console.log("hi");
   const questions = await Question.find({ madeBy: id });
+  console.log(questions);
 
   // Send response
   res.status(200).json({
     status: "success",
     data: questions,
+  });
+});
+
+exports.getQuestionById = catchAsync(async (req, res, next) => {
+  const id = req.params.id;
+  const question = await Question.findById(id);
+
+  // Send response
+  res.status(200).json({
+    status: "success",
+    data: question,
   });
 });
 
@@ -45,6 +58,7 @@ exports.runCode = catchAsync(async (req, res, next) => {
     }
   );
 });
+
 exports.getQuestion = catchAsync(async (req, res, next) => {});
 exports.updateQuestion = catchAsync(async (req, res, next) => {});
 exports.deleteQuestion = catchAsync(async (req, res, next) => {});

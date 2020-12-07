@@ -12,7 +12,6 @@ export default function CreateQues() {
   const [statement, setStatement] = useState("");
   const [type, setType] = useState("Test");
   const [category, setCategory] = useState("");
-  const [inputType, setInputType] = useState("Integer");
   const [sampleIn, setSampleIn] = useState();
   const [sampleOut, setSampleOut] = useState();
   const [tcOne, setTCOne] = useState("");
@@ -48,7 +47,6 @@ export default function CreateQues() {
           statement: statement,
           type: type,
           category: category,
-          stdinType: inputType,
           marks: totalMarks,
           solW: solW,
           testC1In: tcOne,
@@ -126,17 +124,6 @@ export default function CreateQues() {
                 </Form.Group>
               </Form.Row>
               <Form.Row>
-                <Form.Group as={Col} controlId="formGridState">
-                  <Form.Label>Input Type</Form.Label>
-                  <Form.Control
-                    as="select"
-                    defaultValue="Select..."
-                    onChange={(e) => setInputType(e.target.value)}
-                  >
-                    <option>Integer</option>;<option>Double</option>;
-                    <option>String</option>;
-                  </Form.Control>
-                </Form.Group>
                 <Form.Group as={Col} controlId="formGridState">
                   <Form.Label>Marks</Form.Label>
                   <Form.Control

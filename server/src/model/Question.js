@@ -12,10 +12,6 @@ const questionsSchema = new mongoose.Schema(
     category: {
       type: String,
     },
-    stdinType: {
-      type: String,
-      required: [true, "Input type is required"],
-    },
     marks: {
       type: Number,
       default: 5,

@@ -27,6 +27,7 @@ import TestData from "./components/Staff/TestData";
 import CreateTest from "./components/Staff/CreateTest";
 import QuestionData from "./components/Staff/QuestionData";
 import CreateQues from "./components/Staff/CreateQues";
+import { TestProvider } from "./contextapi/TestContext";
 
 const App = () => {
   return (
@@ -36,12 +37,6 @@ const App = () => {
         <Route path="/login" exact component={CLogin} />
         <Route path="/register" exact component={Register} />
         <Route path="/cs-staff" exact component={SLogin} />
-        <UserPrivateRoute path="/dashboard" exact component={Dashboard} />
-        <UserPrivateRoute
-          path="/inbox"
-          exact
-          component={(props) => <Inbox {...props} role="user" />}
-        />
         <AdminPrivateRoute path="/admin/dashboard" exact component={AdminDB} />
         <AdminPrivateRoute path="/admin/test" exact component={TestData} />
         <AdminPrivateRoute
@@ -87,10 +82,18 @@ const App = () => {
           exact
           component={CreateQues}
         />
-        <UserPrivateRoute path="/test" exact component={Test} />
-        <UserPrivateRoute path="/rankings" exact component={Rankings} />
-        <UserPrivateRoute path="/profile" exact component={Profile} />
-        <UserPrivateRoute path="/system-check" exact component={InvigSys} />
+        <TestProvider>
+          <UserPrivateRoute path="/dashboard" exact component={Dashboard} />
+          <UserPrivateRoute
+            path="/inbox"
+            exact
+            component={(props) => <Inbox {...props} role="user" />}
+          />
+          <UserPrivateRoute path="/test" exact component={Test} />
+          <UserPrivateRoute path="/rankings" exact component={Rankings} />
+          <UserPrivateRoute path="/profile" exact component={Profile} />
+          <UserPrivateRoute path="/system-check" exact component={InvigSys} />
+        </TestProvider>
       </Switch>
     </Router>
   );

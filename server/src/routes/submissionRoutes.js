@@ -4,9 +4,10 @@ const submissionController = require("../controller/submissionController");
 const router = Router();
 
 router.post("/api/submission/create", submissionController.createSubmission);
-router.patch("/api/submission/:id/addanswer", submissionController.addAnswer);
+router.patch("/api/submission/addanswer", submissionController.addAnswer);
 
 router.route("/api/submissions").get(submissionController.getAllSubmissions);
+router.route("/api/submission/getscore").get(submissionController.getScore);
 
 router
   .route("/api/submissions/submission/:id")

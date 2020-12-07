@@ -1,21 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 import Cookie from "js-cookie";
 import HomeLayout from "../../layouts/HomeLayout";
 import { useHistory } from "react-router-dom";
+import { TestContext } from "../../contextapi/TestContext";
 
 export default function Dashboard() {
   const [tests, setTests] = useState([]);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loading2, setLoading2] = useState(true);
-  const [testId, setTestId] = useState();
   const [userId, setUserId] = useState();
+  const [selectedTest, setSelectedTest] = useContext(TestContext);
 
   const history = useHistory();
 
-  const handleStart = () => {
+  const handleStart = (id) => {
+    setSelectedTest(id);
     history.push("/test");
   };
 
@@ -24,20 +26,22 @@ export default function Dashboard() {
     if (token) {
       const obj = jwt_decode(token);
       const id = obj.id;
+      setUserId(id);
       axios
         .patch(`http://localhost:4000/api/test/register/${testid}`, {
           userId: id,
         })
         .then((response) => {
           console.log(response.data);
-          setTestId(testId);
           axios
             .post(`http://localhost:4000/api/submission/create`, {
               userID: id,
-              testID: "5fc8c68674d13c0b1c64ace5",
+              testID: testid,
+              totalScore: 0,
             })
             .then((response) => {
               console.log(response.data);
+              window.location.reload();
             });
         });
     }
@@ -48,6 +52,7 @@ export default function Dashboard() {
     if (token) {
       const obj = jwt_decode(token);
       const id = obj.id;
+      setUserId(id);
       axios
         .get(`http://localhost:4000/api/user/tasks/${id}`)
         .then((response) => {
@@ -59,7 +64,6 @@ export default function Dashboard() {
           );
           setLoading(false);
           setData(data);
-          setUserId(id);
         });
     }
   }, []);
@@ -99,17 +103,17 @@ export default function Dashboard() {
         <div className="row">
           <div className="col-md-8">
             <div className="row">
-              <div className="col-md-4">
-                <div
-                  className="card"
-                  style={{
-                    width: "18rem",
-                    margin: "5px",
-                  }}
-                >
-                  <div className="card-body">
-                    {tests.map((d, i) => {
-                      return (
+              {tests.map((d, i) => {
+                return (
+                  <div className="col-md-4">
+                    <div
+                      className="card"
+                      style={{
+                        width: "18rem",
+                        margin: "5px",
+                      }}
+                    >
+                      <div className="card-body">
                         <div key={i}>
                           <p className="card-text">{d.name}</p>
                           <h6 className="card-subtitle mb-2 text-muted">
@@ -126,17 +130,17 @@ export default function Dashboard() {
                           ) : (
                             <button
                               className="btn btn-primary"
-                              onClick={handleStart}
+                              onClick={() => handleStart(d.id)}
                             >
                               Start
                             </button>
                           )}
                         </div>
-                      );
-                    })}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                );
+              })}
             </div>
           </div>
           <div className="col-md-4">

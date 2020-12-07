@@ -19,11 +19,21 @@ exports.getAllSubmissions = catchAsync(async (req, res, next) => {
 
 exports.getSubmission = catchAsync(async (req, res, next) => {});
 
+exports.getScore = catchAsync(async (req, res, next) => {
+  const submission = await Submission.findOne({
+    userID: req.body.userId,
+    testID: req.body.testId,
+  });
+  res.status(201).json(submission);
+});
+
 exports.addAnswer = catchAsync(async (req, res, next) => {
-  const submission = await Submission.findById(req.params.id);
+  const submission = await Submission.findOne({
+    userID: req.body.userId,
+    testID: req.body.testId,
+  });
   await submission.answers.push(req.body);
   await submission.save();
-
   res.status(201).json(submission);
 });
 

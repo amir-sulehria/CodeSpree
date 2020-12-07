@@ -6,6 +6,10 @@ const testSchema = new mongoose.Schema(
       type: String,
       required: [true, "Name is required"],
     },
+    status: {
+      type: String,
+      default: "upcoming",
+    },
     date: {
       type: Date,
       required: [true, "Date is required"],

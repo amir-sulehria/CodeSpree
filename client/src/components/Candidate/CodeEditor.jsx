@@ -7,6 +7,8 @@ import { Accordion, Dropdown, Card, Button } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import Cookie from "js-cookie";
+import { TestContext } from "../../contextapi/TestContext";
+import { useContext } from "react";
 
 export default function CodeEditor(props) {
   const [isEditorReady, setIsEditorReady] = useState(false);
@@ -18,9 +20,10 @@ export default function CodeEditor(props) {
   const [stdin, setStdin] = useState("");
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [testId, setTestId] = useState("5fc8c68674d13c0b1c64ace5");
   const [currentStart, setCurrentStart] = useState(new Date());
   const [currentEnd, setCurrentEnd] = useState(new Date());
+  const [selectedTest, setSelectedTest] = useContext(TestContext);
+  const [obtainedScore, setObtainedScore] = useState(0);
 
   const getLines = () => {
     let a = valueGetter.current();
@@ -32,7 +35,7 @@ export default function CodeEditor(props) {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:4000/api/tests/test/${testId}`)
+      .get(`http://localhost:4000/api/tests/test/${selectedTest}`)
       .then((response) => {
         setQuestions(response.data.data.questions);
         setLoading(false);
@@ -45,6 +48,15 @@ export default function CodeEditor(props) {
     a = a.join("\n");
     return a;
   };
+  const prepareStdinIn = (a) => {
+    console.log("---------");
+    console.log(a);
+    a = a.split(",");
+    a = a.join("\n");
+    console.log(a);
+    console.log("---------");
+    return a;
+  };
   function handleEditorDidMount(_valueGetter) {
     setIsEditorReady(true);
 
@@ -54,28 +66,116 @@ export default function CodeEditor(props) {
   const setTime = () => {
     setCurrentEnd(new Date(Date.now()));
   };
-  const handleSubmit = () => {
+
+  const getMarks = (t1out, t2out, t3out, loc, a) => {
+    let locM = parseFloat(questions[0].locW) * parseInt(questions[0].marks);
+    let socM = parseFloat(questions[0].socW) * parseInt(questions[0].marks);
+    let total = 0;
+    if (
+      t1out === questions[0].testC1Out.toString() &&
+      t2out === questions[0].testC2Out.toString() &&
+      t3out === questions[0].testC3Out.toString()
+    ) {
+      total = parseFloat(questions[0].solW) * parseInt(questions[0].marks);
+      let socMObt, locMObt;
+      if (total !== 0) {
+        let timeTaken = (a.getTime() - currentStart.getTime()) / 1000;
+        if (parseInt(questions[0].locT) - loc >= 0) {
+          locMObt =
+            ((100 - (parseInt(loc) / parseInt(questions[0].locT)) * 100) /
+              100) *
+            locM;
+        }
+        locMObt = locMObt ? locMObt : 0;
+        if (parseInt(questions[0].subT) - timeTaken >= 0) {
+          socMObt =
+            ((100 - (parseInt(timeTaken) / parseInt(questions[0].subT)) * 100) /
+              100) *
+            socM;
+        }
+        socMObt = socMObt ? socMObt : 0;
+        total = total + locMObt + socMObt;
+      }
+    }
+    return total;
+  };
+
+  const getComment = () => {
+    if (lang === "python3") {
+      return "#comment";
+    } else {
+      return "//comment";
+    }
+  };
+
+  const handleSubmit = async () => {
+    let t1in = prepareStdinIn(questions[0].testC1In.toString());
+    let t2in = prepareStdinIn(questions[0].testC2In.toString());
+    let t3in = prepareStdinIn(questions[0].testC3In.toString());
+
     const token = Cookie.get("token");
     setTime();
     const obj = jwt_decode(token);
     const id = obj.id;
+
+    let url = "http://localhost:4000/api/run";
+    let data = {
+      script: valueGetter.current() ? valueGetter.current() : getComment(),
+      language: lang,
+      stdin: t1in,
+      versionIndex: "0",
+      clientId: "7e7642102f3f94520bbdb97de9374678",
+      clientSecret:
+        "6d8f21bd22164605af37871acba14b50041682fb8f060fab6355737b1cff19b9",
+    };
+    let res = await axios.post(url, data);
+    let t1 = res.data.data.output.toString();
+    t1 = t1.trim();
+    url = "http://localhost:4000/api/run";
+    data = {
+      script: valueGetter.current() ? valueGetter.current() : getComment(),
+      language: lang,
+      stdin: t2in,
+      versionIndex: "0",
+      clientId: "7e7642102f3f94520bbdb97de9374678",
+      clientSecret:
+        "6d8f21bd22164605af37871acba14b50041682fb8f060fab6355737b1cff19b9",
+    };
+    res = await axios.post(url, data);
+    let t2 = res.data.data.output.toString();
+    t2 = t2.trim();
+    url = "http://localhost:4000/api/run";
+    data = {
+      script: valueGetter.current() ? valueGetter.current() : getComment(),
+      language: lang,
+      stdin: t3in,
+      versionIndex: "0",
+      clientId: "7e7642102f3f94520bbdb97de9374678",
+      clientSecret:
+        "6d8f21bd22164605af37871acba14b50041682fb8f060fab6355737b1cff19b9",
+    };
+    res = await axios.post(url, data);
+    let t3 = res.data.data.output.toString();
+    t3 = t3.trim();
     axios
-      .patch(
-        `http://localhost:4000/api/submission/${"5fc9f1d09977ed2bd86756bf"}/addanswer`,
-        {
-          userId: id,
-          testId: "5fc8c68674d13c0b1c64ace5",
-          questionId: questions[0].id,
-          statement: questions[0].statement,
-          startedAt: currentStart,
-          submittedAt: new Date(Date.now()),
-          lineOfCode: getLines(),
-          code: valueGetter.current(),
-        }
-      )
+      .patch(`http://localhost:4000/api/submission/addanswer`, {
+        userId: id,
+        testId: selectedTest,
+        questionId: questions[0].id,
+        statement: questions[0].statement,
+        startedAt: currentStart,
+        submittedAt: new Date(Date.now()),
+        lineOfCode: getLines(),
+        code: valueGetter.current() ? valueGetter.current() : "",
+        tcOneOut: t1,
+        tcTwoOut: t2,
+        tcThreeOut: t3,
+        marksObtained: getMarks(t1, t2, t3, getLines(), new Date(Date.now())),
+      })
       .then((response) => {
         setQuestions(questions.filter((d, i) => i !== 0));
         setCurrentStart(new Date(Date.now()));
+        setObtainedScore(response.data.totalScore);
       });
   };
 
@@ -202,7 +302,7 @@ export default function CodeEditor(props) {
         </div>
       ) : (
         <div>
-          <h2>Test Complete</h2>
+          <h2>Test Completed, you got {obtainedScore}</h2>
           <button onClick={() => history.push("/dashboard")}>
             Go back to dashboard
           </button>
