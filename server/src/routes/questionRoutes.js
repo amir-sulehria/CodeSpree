@@ -11,7 +11,7 @@ router.route("/api/questions/:id").get(questionController.getQuestionByMaker);
 router.route("/api/question/:id").get(questionController.getQuestionById);
 
 router
-  .route("/api/questions/Question/:id")
+  .route("/api/question/:id")
   .patch(questionController.updateQuestion)
   .delete(questionController.deleteQuestion);
 

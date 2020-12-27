@@ -1,13 +1,12 @@
 import React from "react";
 import { useState } from "react";
 import { Form, Button, Col } from "react-bootstrap";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import ExaminerLayout from "../../layouts/ExaminerLayout";
 import axios from "axios";
-import jwt_decode from "jwt-decode";
-import Cookie from "js-cookie";
+import { useEffect } from "react";
 
-export default function CreateQues() {
+export default function EditQues() {
   const [error, setError] = useState("");
   const [statement, setStatement] = useState("");
   const [type, setType] = useState("Test");
@@ -26,6 +25,7 @@ export default function CreateQues() {
   const [lineW, setLineW] = useState();
   const [lineThreshold, setLineThreshold] = useState();
   const [totalMarks, setTotalMarks] = useState();
+  const [loading, setLoading] = useState(true);
 
   const [skill, setSkill] = useState([
     "None",
@@ -35,14 +35,38 @@ export default function CreateQues() {
     "Problem Solving",
   ]);
   const history = useHistory();
+
+  let { id } = useParams();
+  useEffect(() => {
+    axios.get(`http://localhost:4000/api/question/${id}`).then((response) => {
+      let data = response.data.data;
+      setStatement(data.statement);
+      setType(data.type);
+      setCategory(data.category);
+      setTotalMarks(data.marks);
+      setSolW(data.solW);
+      setTCOne(data.testC1In);
+      setTCTwo(data.testC2In);
+      setTCThree(data.testC3In);
+      setTCOneOutput(data.testC1Out);
+      setTCTwoOutput(data.testC2Out);
+      setTCThreeOutput(data.testC3Out);
+      setSampleIn(data.sampleIn);
+      setSampleOut(data.sampleOut);
+      setSubW(data.socW);
+      setLineW(data.locW);
+      setSubThreshold(data.subT);
+      setLineThreshold(data.locT);
+      setLoading(false);
+    });
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const token = Cookie.get("token");
-    const id = jwt_decode(token);
     try {
-      const res = await axios.post(
-        "http://localhost:4000/api/question/create",
+      const res = await axios.patch(
+        `http://localhost:4000/api/question/${id}`,
         {
           statement: statement,
           type: type,
@@ -61,7 +85,6 @@ export default function CreateQues() {
           subT: subThreshold,
           locW: lineW,
           locT: lineThreshold,
-          madeBy: id.id,
         }
       );
       if (res.data) {
@@ -82,6 +105,16 @@ export default function CreateQues() {
     }
   };
 
+  if (loading) {
+    return (
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <ExaminerLayout>
       <div className="container" style={{ paddingTop: "3em" }}>
@@ -94,6 +127,7 @@ export default function CreateQues() {
                   <Form.Control
                     onChange={(e) => setStatement(e.target.value)}
                     type="text"
+                    value={statement}
                     placeholder="Enter Question Statement"
                   />
                 </Form.Group>
@@ -104,7 +138,7 @@ export default function CreateQues() {
                   <Form.Label>Type</Form.Label>
                   <Form.Control
                     as="select"
-                    defaultValue="Select..."
+                    defaultValue={type}
                     onChange={(e) => setType(e.target.value)}
                   >
                     <option>Test</option>;<option>Practice</option>;
@@ -114,7 +148,7 @@ export default function CreateQues() {
                   <Form.Label>Label</Form.Label>
                   <Form.Control
                     as="select"
-                    defaultValue="Select..."
+                    defaultValue={category}
                     onChange={(e) => setCategory(e.target.value)}
                   >
                     {skill.map((el) => {
@@ -127,6 +161,7 @@ export default function CreateQues() {
                 <Form.Group as={Col} controlId="formGridState">
                   <Form.Label>Marks</Form.Label>
                   <Form.Control
+                    value={totalMarks}
                     onChange={(e) => setTotalMarks(e.target.value)}
                     type="text"
                     placeholder="Enter total possible marks"
@@ -136,6 +171,7 @@ export default function CreateQues() {
                   <Form.Label>Solution Weightage</Form.Label>
                   <Form.Control
                     onChange={(e) => setSolW(e.target.value)}
+                    value={solW}
                     type="text"
                     placeholder="Enter weightage"
                   />
@@ -146,6 +182,7 @@ export default function CreateQues() {
                   <Form.Label>Test Case Input (1)</Form.Label>
                   <Form.Control
                     onChange={(e) => setTCOne(e.target.value)}
+                    value={tcOne}
                     type="text"
                     placeholder="Enter input"
                   />
@@ -154,6 +191,7 @@ export default function CreateQues() {
                   <Form.Label>Test Case Output (1)</Form.Label>
                   <Form.Control
                     onChange={(e) => setTCOneOutput(e.target.value)}
+                    value={tcOneOutput}
                     type="text"
                     placeholder="Enter output"
                   />
@@ -162,6 +200,7 @@ export default function CreateQues() {
                   <Form.Label>Test Case Input (2)</Form.Label>
                   <Form.Control
                     onChange={(e) => setTCTwo(e.target.value)}
+                    value={tcTwo}
                     type="text"
                     placeholder="Enter input"
                   />
@@ -170,6 +209,7 @@ export default function CreateQues() {
                   <Form.Label>Test Case Output (2)</Form.Label>
                   <Form.Control
                     onChange={(e) => setTCTwoOutput(e.target.value)}
+                    value={tcTwoOutput}
                     type="text"
                     placeholder="Enter output"
                   />
@@ -181,6 +221,7 @@ export default function CreateQues() {
                   <Form.Label>Test Case Input (3)</Form.Label>
                   <Form.Control
                     onChange={(e) => setTCThree(e.target.value)}
+                    value={tcThree}
                     type="text"
                     placeholder="Enter input"
                   />
@@ -189,6 +230,7 @@ export default function CreateQues() {
                   <Form.Label>Test Case Output (3)</Form.Label>
                   <Form.Control
                     onChange={(e) => setTCThreeOutput(e.target.value)}
+                    value={tcThreeOutput}
                     type="text"
                     placeholder="Enter output"
                   />
@@ -197,6 +239,7 @@ export default function CreateQues() {
                   <Form.Label>Sample Input</Form.Label>
                   <Form.Control
                     onChange={(e) => setSampleIn(e.target.value)}
+                    value={sampleIn}
                     type="text"
                     placeholder="Enter input"
                   />
@@ -205,6 +248,7 @@ export default function CreateQues() {
                   <Form.Label>Sample Output</Form.Label>
                   <Form.Control
                     onChange={(e) => setSampleOut(e.target.value)}
+                    value={sampleOut}
                     type="text"
                     placeholder="Enter output"
                   />
@@ -216,6 +260,7 @@ export default function CreateQues() {
                   <Form.Label>Speed Coding Weightage</Form.Label>
                   <Form.Control
                     onChange={(e) => setSubW(e.target.value)}
+                    value={subW}
                     type="text"
                     placeholder="Enter weightage"
                   />
@@ -224,6 +269,7 @@ export default function CreateQues() {
                   <Form.Label>Submission Threshold</Form.Label>
                   <Form.Control
                     onChange={(e) => setSubThreshold(e.target.value)}
+                    value={subThreshold}
                     type="text"
                     placeholder="Enter submission threshold"
                   />
@@ -232,6 +278,7 @@ export default function CreateQues() {
                   <Form.Label>LineOfCode Weightage</Form.Label>
                   <Form.Control
                     onChange={(e) => setLineW(e.target.value)}
+                    value={lineW}
                     type="text"
                     placeholder="Enter weightage"
                   />
@@ -240,13 +287,14 @@ export default function CreateQues() {
                   <Form.Label>LineOfCode Threshold</Form.Label>
                   <Form.Control
                     onChange={(e) => setLineThreshold(e.target.value)}
+                    value={lineThreshold}
                     type="text"
                     placeholder="Enter threshold"
                   />
                 </Form.Group>
               </Form.Row>
               <Button variant="primary" type="submit" onClick={handleSubmit}>
-                Submit
+                Update
               </Button>
             </Form>
             <br />

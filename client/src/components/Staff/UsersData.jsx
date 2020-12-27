@@ -15,6 +15,8 @@ import "react-datepicker/dist/react-datepicker.css";
 
 export default function UsersData(props) {
   const [show, setShow] = useState(false);
+  const [show2, setShow2] = useState(false);
+  const [show3, setShow3] = useState(false);
   const [tshow, setTShow] = useState();
   const [message, setMessage] = useState("");
   const [data, setData] = useState({ users: [] });
@@ -65,6 +67,25 @@ export default function UsersData(props) {
     }
   };
 
+  const handleTaskAll = async () => {
+    const res = await axios.patch(
+      `http://localhost:4000/admin/user/notifyall`,
+      { taskMsg: message, deadline: startDate, createdAt: Date.now() }
+    );
+    if (res.status === 200) {
+      setShow3(false);
+    }
+  };
+  const handleMessageAll = async () => {
+    const res = await axios.patch(
+      `http://localhost:4000/admin/user/messageall`,
+      { msg: message, createdAt: Date.now() }
+    );
+    if (res.status === 200) {
+      setShow2(false);
+    }
+  };
+
   const handleDelete = async (id) => {
     const token = Cookie.get("token");
     if (token) {
@@ -90,6 +111,19 @@ export default function UsersData(props) {
       </Alert>
 
       <div className="container">
+        <div className="row">
+          <div className="col-md-8"></div>
+          <div className="col-md-2">
+            <Button variant="primary" onClick={() => setShow2(true)}>
+              Message All
+            </Button>
+          </div>
+          <div className="col-md-2">
+            <Button variant="info" onClick={() => setShow3(true)}>
+              Notify All
+            </Button>
+          </div>
+        </div>
         <div className="row">
           <div className="col-md-12">
             <table class="table">
@@ -193,6 +227,57 @@ export default function UsersData(props) {
           </div>
         </div>
       </div>
+
+      <Modal show={show2} onHide={() => setShow2(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Enter message</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <InputGroup className="mb-3">
+            <FormControl
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Enter message"
+              aria-label="message area"
+              aria-describedby="basic-addon2"
+            />
+            <InputGroup.Append>
+              <Button variant="primary" onClick={() => handleMessageAll()}>
+                Send
+              </Button>
+            </InputGroup.Append>
+          </InputGroup>
+        </Modal.Body>
+      </Modal>
+
+      {/*  */}
+
+      <Modal show={show3} onHide={() => setShow3(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Enter your message</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <InputGroup className="mb-3">
+            <FormControl
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Enter message"
+              aria-label="message area"
+              aria-describedby="basic-addon2"
+            />
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <Form.Label>Deadline{":  "}</Form.Label>
+
+            <DatePicker
+              selected={startDate}
+              onChange={(date) => setStartDate(date)}
+            />
+          </InputGroup>
+
+          <Button variant="primary" onClick={() => handleTaskAll()}>
+            Send
+          </Button>
+        </Modal.Body>
+      </Modal>
     </AdminLayout>
   );
 }

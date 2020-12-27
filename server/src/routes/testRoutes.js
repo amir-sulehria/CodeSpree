@@ -10,6 +10,9 @@ router.route("/api/user/upcomingtests").get(testController.getUpcomingTests);
 
 router.patch("/api/test/:id/addquestions", testController.addQuestions);
 
+router.get("/api/test/netspeed", testController.testSpeed);
+router.get("/api/testdata", testController.testData);
+
 router.patch("/api/test/register/:id", testController.registerCandidate);
 
 router

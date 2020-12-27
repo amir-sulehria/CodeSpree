@@ -1,12 +1,40 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import HomeLayout from "../../layouts/HomeLayout";
 import { Alert, FormControl, InputGroup } from "react-bootstrap";
+import { useContext } from "react";
+import { TestContext } from "../../contextapi/TestContext";
+import axios from "axios";
 
 export default function Rankings() {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedTest, setSelectedTest] = useContext(TestContext);
+
+  useEffect(() => {
+    console.log(selectedTest);
+    axios
+      .get(`http://localhost:4000/api/submission/getranking/${selectedTest}`)
+      .then((response) => {
+        setLoading(false);
+        setData(response.data);
+        console.log(data);
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center">
+        <div className="spinner-border" role="status">
+          <span className="sr-only">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <HomeLayout>
       <Alert variant="success">
-        <Alert.Heading>Results for Nov 2020 announced</Alert.Heading>
+        <Alert.Heading>Rankings</Alert.Heading>
         <p>
           List of candidates who appeared in the exam along with their score
         </p>
@@ -14,34 +42,24 @@ export default function Rankings() {
       <div className="container">
         <div className="row">
           <div className="col-md-8">
-            <table class="table">
+            <table className="table">
               <thead>
                 <tr>
                   <th scope="col">#</th>
                   <th scope="col">Name</th>
                   <th scope="col">Score</th>
-                  <th scope="col">City</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <th scope="row">1</th>
-                  <td>Mark</td>
-                  <td>95</td>
-                  <td>Lahore</td>
-                </tr>
-                <tr>
-                  <th scope="row">2</th>
-                  <td>Jacob</td>
-                  <td>90</td>
-                  <td>Islamabad</td>
-                </tr>
-                <tr>
-                  <th scope="row">3</th>
-                  <td>Larry</td>
-                  <td>80</td>
-                  <td>Karachi</td>
-                </tr>
+                {data.map((d, i) => {
+                  return (
+                    <tr>
+                      <th scope="row">{i + 1}</th>
+                      <td>{d.userID.name}</td>
+                      <td>{d.totalScore}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

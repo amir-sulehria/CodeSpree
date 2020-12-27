@@ -28,6 +28,7 @@ import CreateTest from "./components/Staff/CreateTest";
 import QuestionData from "./components/Staff/QuestionData";
 import CreateQues from "./components/Staff/CreateQues";
 import { TestProvider } from "./contextapi/TestContext";
+import EditQues from "./components/Staff/EditQues";
 
 const App = () => {
   return (
@@ -76,12 +77,17 @@ const App = () => {
           exact
           component={QuestionData}
         />
-        <StaffPrivateRoute path="/examiner/inbox" exact component={Inbox} />
         <StaffPrivateRoute
           path="/examiner/questions/create"
           exact
           component={CreateQues}
         />
+        <StaffPrivateRoute
+          path="/examiner/questions/:id"
+          exact
+          component={EditQues}
+        />
+        <StaffPrivateRoute path="/examiner/inbox" exact component={Inbox} />
         <TestProvider>
           <UserPrivateRoute path="/dashboard" exact component={Dashboard} />
           <UserPrivateRoute

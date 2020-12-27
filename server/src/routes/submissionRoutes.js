@@ -8,6 +8,9 @@ router.patch("/api/submission/addanswer", submissionController.addAnswer);
 
 router.route("/api/submissions").get(submissionController.getAllSubmissions);
 router.route("/api/submission/getscore").get(submissionController.getScore);
+router
+  .route("/api/submission/getranking/:id")
+  .get(submissionController.getRanking);
 
 router
   .route("/api/submissions/submission/:id")

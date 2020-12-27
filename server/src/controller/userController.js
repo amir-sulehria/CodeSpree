@@ -98,6 +98,19 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.messageAll = catchAsync(async (req, res, next) => {
+  res.status(204).json({
+    status: "success",
+    data: null,
+  });
+});
+exports.taskAll = catchAsync(async (req, res, next) => {
+  res.status(204).json({
+    status: "success",
+    data: null,
+  });
+});
+
 exports.getUser = catchAsync(async (req, res, next) => {
   const inbox = await User.findById(req.params.id).select("inbox");
   // Send response

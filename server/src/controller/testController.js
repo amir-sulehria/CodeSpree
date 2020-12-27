@@ -59,5 +59,38 @@ exports.getTest = catchAsync(async (req, res, next) => {
     data: test,
   });
 });
+
+exports.testSpeed = catchAsync(async (req, res, next) => {
+  const FastSpeedtest = require("fast-speedtest-api");
+  let speedtest = new FastSpeedtest({
+    token: "YXNkZmFzZGxmbnNkYWZoYXNkZmhrYWxm", // required
+    verbose: false, // default: false
+    timeout: 10000, // default: 5000
+    https: true, // default: true
+    urlCount: 5, // default: 5
+    bufferSize: 8, // default: 8
+    unit: FastSpeedtest.UNITS.Mbps, // default: Bps
+    proxy: "http://optional:auth@my-proxy:123", // default: undefined
+  });
+
+  const s = await speedtest.getSpeed();
+
+  res.status(200).json({
+    status: "success",
+    data: s,
+  });
+});
+exports.testData = catchAsync(async (req, res, next) => {
+  const tests = await Test.find();
+  const testData = [];
+  tests.map((t, i) => {
+    testData.push({ name: t.name, totalCandidates: t.registeredUsers.length });
+  });
+
+  res.status(200).json({
+    status: "success",
+    data: testData,
+  });
+});
 exports.updateTest = catchAsync(async (req, res, next) => {});
 exports.deleteTest = catchAsync(async (req, res, next) => {});

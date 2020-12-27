@@ -60,5 +60,25 @@ exports.runCode = catchAsync(async (req, res, next) => {
 });
 
 exports.getQuestion = catchAsync(async (req, res, next) => {});
-exports.updateQuestion = catchAsync(async (req, res, next) => {});
-exports.deleteQuestion = catchAsync(async (req, res, next) => {});
+exports.updateQuestion = catchAsync(async (req, res, next) => {
+  const id = req.params.id;
+  const question = await Question.findByIdAndUpdate(id, req.body);
+  await question.save();
+  res.status(200).json({
+    status: "success",
+    data: {
+      question: question,
+    },
+  });
+});
+exports.deleteQuestion = catchAsync(async (req, res, next) => {
+  const id = req.params.id;
+  const question = await Question.findByIdAndDelete(id, req.body);
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      question: question,
+    },
+  });
+});

@@ -46,4 +46,7 @@ authRouter.patch("/admin/user/task/:id", userController.sendTask);
 authRouter.get("/api/user/tasks/:id", userController.getTasks);
 authRouter.get("/api/users/inbox/:id", userController.getUser);
 
+authRouter.get("/admin/user/notifyall", userController.taskAll);
+authRouter.get("/admin/user/messageall", userController.messageAll);
+
 module.exports = authRouter;

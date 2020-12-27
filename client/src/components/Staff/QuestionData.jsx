@@ -53,6 +53,19 @@ export default function QuestionData() {
     );
   };
 
+  const handleDel = async (id) => {
+    try {
+      const res = await axios.delete(
+        `http://localhost:4000/api/question/${id}`
+      );
+      if (res.data) {
+        window.location.reload();
+      }
+    } catch (error) {
+      alert(error);
+    }
+  };
+
   return (
     <ExaminerLayout>
       <div className="container" style={{ padding: "3em" }}>
@@ -75,6 +88,7 @@ export default function QuestionData() {
                 <tr>
                   <th scope="col">#</th>
                   <th scope="col">Statement</th>
+                  <th scope="col">Category</th>
                   <th scope="col">Type</th>
                   <th scope="col">Date</th>
                 </tr>
@@ -84,16 +98,26 @@ export default function QuestionData() {
                   <tr>
                     <th scope="row">{ind + 1}</th>
                     <td key={item.objectID}>{item.statement}</td>
+                    <td key={item.objectID}>{item.category}</td>
                     <td key={item.objectID}>{item.type}</td>
                     <td key={item.objectID}>{getDate(item.createdAt)}</td>
                     <td>
-                      <button className="btn btn-sm btn-info">View</button>
+                      <button
+                        className="btn btn-sm btn-info"
+                        onClick={() =>
+                          history.push(`/examiner/questions/${item.id}`)
+                        }
+                      >
+                        Edit
+                      </button>
                     </td>
                     <td>
-                      <button className="btn btn-sm btn-warning">Edit</button>
-                    </td>
-                    <td>
-                      <button className="btn btn-sm btn-danger">Delete</button>
+                      <button
+                        className="btn btn-sm btn-danger"
+                        onClick={() => handleDel(item.id)}
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 ))}

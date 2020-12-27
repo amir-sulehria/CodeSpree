@@ -37,6 +37,16 @@ exports.addAnswer = catchAsync(async (req, res, next) => {
   res.status(201).json(submission);
 });
 
+exports.getRanking = catchAsync(async (req, res, next) => {
+  const submission = await Submission.find({
+    testID: req.params.id,
+  })
+    .populate("userID")
+    .sort({ totalScore: "descending" });
+
+  res.status(201).json(submission);
+});
+
 exports.updateSubmission = catchAsync(async (req, res, next) => {
   const submission = await Submission.findById(req.params.id);
   submission.answers.push(req.body);
