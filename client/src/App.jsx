@@ -29,6 +29,7 @@ import QuestionData from "./components/Staff/QuestionData";
 import CreateQues from "./components/Staff/CreateQues";
 import { TestProvider } from "./contextapi/TestContext";
 import EditQues from "./components/Staff/EditQues";
+import EditUser from "./components/Staff/EditUser";
 
 const App = () => {
   return (
@@ -39,6 +40,11 @@ const App = () => {
         <Route path="/register" exact component={Register} />
         <Route path="/cs-staff" exact component={SLogin} />
         <AdminPrivateRoute path="/admin/dashboard" exact component={AdminDB} />
+        <AdminPrivateRoute
+          path="/admin/user/edit/:id"
+          exact
+          component={EditUser}
+        />
         <AdminPrivateRoute path="/admin/test" exact component={TestData} />
         <AdminPrivateRoute
           path="/admin/test/create"

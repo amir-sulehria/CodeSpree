@@ -11,6 +11,7 @@ import AdminLayout from "../../layouts/AdminLayout";
 import axios from "axios";
 import Cookie from "js-cookie";
 import DatePicker from "react-datepicker";
+import { useHistory } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
 
 export default function UsersData(props) {
@@ -22,7 +23,7 @@ export default function UsersData(props) {
   const [data, setData] = useState({ users: [] });
   const [loading, setLoading] = useState(true);
   const [startDate, setStartDate] = useState(new Date());
-
+  const history = useHistory();
   useEffect(() => {
     axios.get(props.url).then((response) => {
       setData(response.data.data.users);
@@ -68,20 +69,21 @@ export default function UsersData(props) {
   };
 
   const handleTaskAll = async () => {
-    const res = await axios.patch(
-      `http://localhost:4000/admin/user/notifyall`,
-      { taskMsg: message, deadline: startDate, createdAt: Date.now() }
-    );
-    if (res.status === 200) {
+    const res = await axios.post(`http://localhost:4000/admin/user/notifyall`, {
+      taskMsg: message,
+      deadline: startDate,
+      createdAt: Date.now(),
+    });
+    if (res.status === 204) {
       setShow3(false);
     }
   };
   const handleMessageAll = async () => {
-    const res = await axios.patch(
+    const res = await axios.post(
       `http://localhost:4000/admin/user/messageall`,
       { msg: message, createdAt: Date.now() }
     );
-    if (res.status === 200) {
+    if (res.status === 204) {
       setShow2(false);
     }
   };
@@ -141,7 +143,14 @@ export default function UsersData(props) {
                     <td key={item.objectID}>{item.name}</td>
                     <td key={item.objectID}>{item.email}</td>
                     <td>
-                      <button className="btn btn-sm btn-success">Edit</button>
+                      <button
+                        className="btn btn-sm btn-success"
+                        onClick={() =>
+                          history.push(`/admin/user/edit/${item.id}`)
+                        }
+                      >
+                        Edit
+                      </button>
                     </td>
                     <td>
                       <button

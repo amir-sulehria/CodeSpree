@@ -37,16 +37,17 @@ authRouter
 
 authRouter
   .route("/api/users/user/:id")
-  .get(userController.getUser)
+  .get(userController.getUserById)
   .patch(userController.updateUser)
   .delete(userController.deleteUser);
 
 authRouter.patch("/admin/user/notify/:id", userController.notifyUser);
 authRouter.patch("/admin/user/task/:id", userController.sendTask);
+authRouter.patch("/api/user/role/:id", userController.updateRole);
 authRouter.get("/api/user/tasks/:id", userController.getTasks);
 authRouter.get("/api/users/inbox/:id", userController.getUser);
 
-authRouter.get("/admin/user/notifyall", userController.taskAll);
-authRouter.get("/admin/user/messageall", userController.messageAll);
+authRouter.post("/admin/user/notifyall", userController.taskAll);
+authRouter.post("/admin/user/messageall", userController.messageAll);
 
 module.exports = authRouter;

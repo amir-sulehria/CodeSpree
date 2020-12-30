@@ -58,12 +58,12 @@ export default function Dashboard() {
         .then((response) => {
           return response.data.data.upcomingTasks;
         })
-        .then((data) => {
-          data.sort((a, b) =>
-            new Date(a.createdAt) < new Date(b.createdAt) ? 1 : -1
-          );
+        .then((d) => {
+          d = d.filter((a) => {
+            return new Date(a.createdAt) > new Date(Date.now());
+          });
           setLoading(false);
-          setData(data);
+          setData(d);
         });
     }
   }, []);
@@ -105,7 +105,7 @@ export default function Dashboard() {
             <div className="row">
               {tests.map((d, i) => {
                 return (
-                  <div className="col-md-4">
+                  <div className="col-md-6">
                     <div
                       className="card"
                       style={{

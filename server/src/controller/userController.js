@@ -99,12 +99,26 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
 });
 
 exports.messageAll = catchAsync(async (req, res, next) => {
+  const updatedUser = await User.updateMany(
+    {},
+    {
+      $push: { inbox: req.body },
+    }
+  );
+  // await updatedUser.inbox.push(req.body.message);
+  // await updatedUser
   res.status(204).json({
     status: "success",
     data: null,
   });
 });
 exports.taskAll = catchAsync(async (req, res, next) => {
+  const updatedUser = await User.updateMany(
+    {},
+    {
+      $push: { upcomingTasks: req.body },
+    }
+  );
   res.status(204).json({
     status: "success",
     data: null,
@@ -118,6 +132,27 @@ exports.getUser = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     data: inbox,
+  });
+});
+exports.getUserById = catchAsync(async (req, res, next) => {
+  const inbox = await User.findById(req.params.id).select(
+    "name email role photo"
+  );
+  // Send response
+
+  res.status(200).json({
+    status: "success",
+    data: inbox,
+  });
+});
+exports.updateRole = catchAsync(async (req, res, next) => {
+  const user = await User.findByIdAndUpdate(req.params.id, {
+    role: req.body.role,
+  });
+  user.save();
+  res.status(200).json({
+    status: "success",
+    data: user,
   });
 });
 
