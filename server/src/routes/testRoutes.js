@@ -4,14 +4,17 @@ const testController = require("../controller/testController");
 const router = Router();
 
 router.post("/api/test/create", testController.createTest);
+router.patch("/api/practice/:id", testController.addSolvedQues);
 
 router.route("/api/tests").get(testController.getAllTests);
+router.route("/api/servertime").get(testController.getTime);
 router.route("/api/user/upcomingtests").get(testController.getUpcomingTests);
 
 router.patch("/api/test/:id/addquestions", testController.addQuestions);
 
 router.get("/api/test/netspeed", testController.testSpeed);
 router.get("/api/testdata", testController.testData);
+router.get("/api/practice", testController.getPracticeQues);
 
 router.patch("/api/test/register/:id", testController.registerCandidate);
 

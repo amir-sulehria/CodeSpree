@@ -14,11 +14,17 @@ export default function Dashboard() {
   const [userId, setUserId] = useState();
   const [selectedTest, setSelectedTest] = useContext(TestContext);
 
+  const getServerTime = async () => {
+    const res = await axios.get("http://localhost:4000/api/servertime");
+    let serverTime = res.data.data;
+    return serverTime;
+  };
+
   const history = useHistory();
 
   const handleStart = (id) => {
     setSelectedTest(id);
-    history.push("/test");
+    history.push("/system-check");
   };
 
   const hanldeParticipate = (testid) => {
@@ -60,7 +66,7 @@ export default function Dashboard() {
         })
         .then((d) => {
           d = d.filter((a) => {
-            return new Date(a.createdAt) > new Date(Date.now());
+            return new Date(a.deadline) > new Date(Date.now());
           });
           setLoading(false);
           setData(d);

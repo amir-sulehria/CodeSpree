@@ -17,6 +17,16 @@ exports.getAllSubmissions = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.updateSubStatus = catchAsync(async (req, res, next) => {
+  const submission = await Submission.findOneAndUpdate(
+    { testID: req.params.id, userID: req.body.userId },
+    {
+      status: req.body.status,
+    }
+  );
+  submission.save();
+  res.status(201).json(submission);
+});
 exports.getSubmission = catchAsync(async (req, res, next) => {});
 
 exports.getScore = catchAsync(async (req, res, next) => {

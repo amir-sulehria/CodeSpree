@@ -14,6 +14,10 @@ const testSchema = new mongoose.Schema(
       type: Date,
       required: [true, "Date is required"],
     },
+    submissionDeadline: {
+      type: Date,
+      required: [true, "Date is required"],
+    },
     registeredUsers: [
       {
         type: mongoose.Schema.ObjectId,

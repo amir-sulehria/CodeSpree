@@ -13,6 +13,10 @@ router
   .get(submissionController.getRanking);
 
 router
+  .route("/api/submission/updatestatus/:id")
+  .patch(submissionController.updateSubStatus);
+
+router
   .route("/api/submissions/submission/:id")
   .get(submissionController.getSubmission)
   .patch(submissionController.updateSubmission)

@@ -56,6 +56,15 @@ const submissionSchema = new mongoose.Schema(
     answers: [answers],
     totalScore: {
       type: Number,
+      default: 0,
+    },
+    status: {
+      type: String,
+      default: "absent",
+    },
+    doubt: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -76,7 +85,11 @@ answers.pre("save", async function (next) {
     (this.submittedAt.getTime() - this.startedAt.getTime()) / 1000
   );
   // this.parent().totalScore = this.parent().totalScore + this.marksObtained;
-
+  if (this.status === "violated") {
+    this.status = "violated";
+  } else {
+    this.status = "present";
+  }
   next();
 });
 submissionSchema.pre("save", async function (next) {
@@ -87,6 +100,7 @@ submissionSchema.pre("save", async function (next) {
       this.totalScore += this.answers[i].marksObtained;
     }
   }
+
   next();
 });
 

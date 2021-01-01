@@ -3,17 +3,27 @@ import Editor from "@monaco-editor/react";
 import "./CodeEditor.css";
 import HomeLayout from "../../layouts/HomeLayout";
 import axios from "axios";
-import { Accordion, Dropdown, Card, Button } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import Cookie from "js-cookie";
 import { TestContext } from "../../contextapi/TestContext";
 import { useContext } from "react";
+import Webcam from "react-webcam";
+import Countdown from "react-countdown";
 
 export default function CodeEditor(props) {
   const [isEditorReady, setIsEditorReady] = useState(false);
   const valueGetter = useRef();
   const history = useHistory();
+  const webcamRef = useRef(null);
+
+  const [camStatus, setCamStatus] = useState("pending");
+  const [fullScreen, setFullScreen] = useState("pending");
+  const [not, setNot] = useState("pending");
+  const [storage, setStorage] = useState("pending");
+  const picOne = Math.floor(Math.random() * 10000);
+  const picTwo = Math.floor(Math.random() * 10000) + picOne;
+  const picThree = Math.floor(Math.random() * 10000) + picTwo;
 
   const [output, setOutput] = useState("");
   const [lang, setLang] = useState("python3");
@@ -21,9 +31,94 @@ export default function CodeEditor(props) {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentStart, setCurrentStart] = useState(new Date());
+  const [deadline, setDeadline] = useState(new Date());
   const [currentEnd, setCurrentEnd] = useState(new Date());
   const [selectedTest, setSelectedTest] = useContext(TestContext);
   const [obtainedScore, setObtainedScore] = useState(0);
+
+  //invig sys
+  const handleFullScreen = () => {
+    if (
+      window.innerHeight === window.screen.height ||
+      window.screen.height - window.innerHeight < 5
+    ) {
+      setFullScreen("✔");
+    } else {
+      setFullScreen("Pending");
+      new Notification("Turn on full screen mode or test will be cancelled");
+      setTimeout(handleChange, 10000);
+    }
+  };
+
+  const handleChange = async () => {
+    const token = Cookie.get("token");
+    const obj = jwt_decode(token);
+    const id = obj.id;
+
+    if (
+      window.innerHeight !== window.screen.height ||
+      window.screen.height - window.innerHeight > 5
+    ) {
+      axios
+        .patch(
+          `http://localhost:4000/api/submission/updatestatus/${selectedTest}`,
+          { status: "violated", userId: id }
+        )
+        .then((res) => history.push("/dashboard"));
+    }
+  };
+
+  const handleBlur = () => {
+    if (document.visibilityState === "hidden") {
+      new Notification("Go back to the test screen or it'll be cancelled");
+      setTimeout(() => {
+        if (document.visibilityState === "hidden") {
+          history.push("/dashboard");
+        }
+      }, 10000);
+    }
+  };
+  const camTimeOut = () => {
+    const img1 = handleCam();
+    if (img1 !== null) {
+      console.log(img1);
+    } else {
+      new Notification("Your camera not working properly");
+    }
+  };
+  useEffect(() => {
+    window.addEventListener("resize", handleFullScreen);
+    document.addEventListener("visibilitychange", handleBlur);
+
+    return () => {
+      window.removeEventListener("resize", handleFullScreen);
+      document.removeEventListener("visibilitychange", handleBlur);
+    };
+  }, []);
+
+  const handleCam = React.useCallback(() => {
+    const imageSrc = webcamRef.current.getScreenshot();
+    if (
+      imageSrc === null ||
+      imageSrc ===
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAGQAfQDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAn/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AJVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//9k="
+    ) {
+      return null;
+    } else {
+      return imageSrc;
+    }
+  }, [webcamRef]);
+
+  const renderer = ({ hours, minutes, seconds, completed }) => {
+    return (
+      <div style={{ backgroundColor: "red" }}>
+        <span>
+          Remaning time: {minutes}:{seconds}
+        </span>
+      </div>
+    );
+  };
+  //
 
   const getLines = () => {
     let a = valueGetter.current();
@@ -31,13 +126,17 @@ export default function CodeEditor(props) {
     return a;
   };
 
-  const handleTest = () => {};
+  const handleTest = () => {
+    const img = handleCam();
+    console.log(img);
+  };
 
   useEffect(() => {
     axios
       .get(`http://localhost:4000/api/tests/test/${selectedTest}`)
       .then((response) => {
         setQuestions(response.data.data.questions);
+        setDeadline(response.data.data.submissionDeadline);
         setLoading(false);
         setCurrentStart(new Date(Date.now()));
       });
@@ -212,6 +311,11 @@ export default function CodeEditor(props) {
   }
   return (
     <HomeLayout>
+      <Countdown
+        date={deadline}
+        onComplete={() => history.push("/dashboard")}
+        renderer={renderer}
+      />
       {questions[0] ? (
         <div className="container">
           <div className="row">
@@ -296,6 +400,20 @@ export default function CodeEditor(props) {
                 Check
               </button>
             </div>
+          </div>
+          <div className="row">
+            <Webcam
+              audio={false}
+              height={400}
+              ref={webcamRef}
+              screenshotFormat="image/jpeg"
+              width={500}
+              videoConstraints={{
+                width: 500,
+                height: 400,
+                facingMode: "user",
+              }}
+            />
           </div>
           <br />
           <br />

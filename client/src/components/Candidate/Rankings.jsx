@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import HomeLayout from "../../layouts/HomeLayout";
-import { Alert, FormControl, InputGroup } from "react-bootstrap";
+import { Alert, Col, Form, FormControl, InputGroup } from "react-bootstrap";
 import { useContext } from "react";
 import { TestContext } from "../../contextapi/TestContext";
 import axios from "axios";
@@ -8,16 +8,34 @@ import axios from "axios";
 export default function Rankings() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedTest, setSelectedTest] = useContext(TestContext);
+  const [test, setTest] = useState();
+  const [ranking, setRanking] = useState([]);
+
+  const handleLoad = () => {
+    let selectedTest;
+    if (typeof test === "undefined") {
+      selectedTest = data[0].name;
+    } else {
+      selectedTest = test;
+    }
+    const id = data.filter((e) => e.name === selectedTest);
+    if (id[0]) {
+      axios
+        .get(`http://localhost:4000/api/submission/getranking/${id[0].id}`)
+        .then((res) => {
+          setRanking(res.data);
+          console.log(res);
+        });
+    }
+  };
 
   useEffect(() => {
-    console.log(selectedTest);
     axios
-      .get(`http://localhost:4000/api/submission/getranking/${selectedTest}`)
+      .get(`http://localhost:4000/api/users/getalltests`)
       .then((response) => {
         setLoading(false);
-        setData(response.data);
-        console.log(data);
+        setData(response.data.data);
+        console.log(response.data.data);
       });
   }, []);
 
@@ -41,55 +59,62 @@ export default function Rankings() {
       </Alert>
       <div className="container">
         <div className="row">
-          <div className="col-md-8">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Score</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.map((d, i) => {
-                  return (
-                    <tr>
-                      <th scope="row">{i + 1}</th>
-                      <td>{d.userID.name}</td>
-                      <td>{d.totalScore}</td>
-                    </tr>
-                  );
+          <div className="col-md-6">
+            <h3>Select Test to load</h3>
+            <Form.Group as={Col} controlId="formGridState">
+              <Form.Label>Test</Form.Label>
+              <Form.Control
+                as="select"
+                onChange={(e) => setTest(e.target.value)}
+              >
+                {data.map((el) => {
+                  return <option>{el.name}</option>;
                 })}
-              </tbody>
-            </table>
-          </div>
-          <div className="col-md-4">
-            <h4>Filter By:</h4>
-            <InputGroup className="mb-3">
-              <InputGroup.Prepend>
-                <InputGroup.Text id="inputGroup-sizing-default">
-                  Name
-                </InputGroup.Text>
-              </InputGroup.Prepend>
-              <FormControl
-                aria-label="Default"
-                aria-describedby="inputGroup-sizing-default"
-              />
-            </InputGroup>
-            <InputGroup className="mb-3">
-              <InputGroup.Prepend>
-                <InputGroup.Text id="inputGroup-sizing-default">
-                  City
-                </InputGroup.Text>
-              </InputGroup.Prepend>
-              <FormControl
-                aria-label="Default"
-                aria-describedby="inputGroup-sizing-default"
-              />
-            </InputGroup>
+              </Form.Control>
+              <br />
+              <button className="btn btn-info" onClick={handleLoad}>
+                Load
+              </button>
+            </Form.Group>
           </div>
         </div>
       </div>
+      <hr />
+      {typeof ranking !== "undefined" || ranking.length >= 1 ? (
+        <div className="container">
+          <div className="row">
+            <div className="col-md-12">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Score</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ranking.map((d, i) => {
+                    return (
+                      <tr>
+                        <th scope="row">{i + 1}</th>
+                        <td>{d.userID.name}</td>
+                        <td>
+                          {d.userID.email.substring(
+                            0,
+                            d.userID.email.lastIndexOf("@")
+                          )}
+                        </td>
+                        <td>{d.totalScore}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </HomeLayout>
   );
 }

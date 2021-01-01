@@ -4,9 +4,11 @@ import AdminLayout from "../../layouts/AdminLayout";
 import DatePicker from "react-datepicker";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
+import DateTimePicker from "react-datetime-picker";
 
 export default function CreateTest() {
   const [startDate, setStartDate] = useState(new Date());
+  const [deadline, setDeadline] = useState(new Date());
   const [name, setName] = useState("");
   const history = useHistory();
   const [created, setCreated] = useState(false);
@@ -49,6 +51,7 @@ export default function CreateTest() {
       .post(`http://localhost:4000/api/test/create`, {
         name: name,
         date: startDate,
+        submissionDeadline: deadline,
       })
       .then((response) => {
         setCreated(true);
@@ -74,9 +77,18 @@ export default function CreateTest() {
         <Form.Group controlId="formGridDate">
           <Form.Label>Event Date</Form.Label>
           <br />
-          <DatePicker
-            selected={startDate}
+          <DateTimePicker
+            value={startDate}
             onChange={(date) => setStartDate(date)}
+          />
+        </Form.Group>
+
+        <Form.Group controlId="formGridDate">
+          <Form.Label>Submission Deadline</Form.Label>
+          <br />
+          <DateTimePicker
+            value={deadline}
+            onChange={(date) => setDeadline(date)}
           />
         </Form.Group>
 

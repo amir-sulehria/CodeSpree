@@ -30,6 +30,8 @@ import CreateQues from "./components/Staff/CreateQues";
 import { TestProvider } from "./contextapi/TestContext";
 import EditQues from "./components/Staff/EditQues";
 import EditUser from "./components/Staff/EditUser";
+import CheckScreen from "./components/Candidate/CheckScreen";
+import Practice from "./components/Candidate/Practice";
 
 const App = () => {
   return (
@@ -104,7 +106,12 @@ const App = () => {
           <UserPrivateRoute path="/test" exact component={Test} />
           <UserPrivateRoute path="/rankings" exact component={Rankings} />
           <UserPrivateRoute path="/profile" exact component={Profile} />
-          <UserPrivateRoute path="/system-check" exact component={InvigSys} />
+          <UserPrivateRoute path="/practice" exact component={Practice} />
+          <UserPrivateRoute
+            path="/system-check"
+            exact
+            component={CheckScreen}
+          />
         </TestProvider>
       </Switch>
     </Router>

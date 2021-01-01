@@ -3,6 +3,7 @@ const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const factory = require("./handlerFactory");
 const APIFeatures = require("../utils/apiFeautures");
+const Test = require("../model/Test");
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -134,6 +135,29 @@ exports.getUser = catchAsync(async (req, res, next) => {
     data: inbox,
   });
 });
+
+exports.getUserSolvedQues = catchAsync(async (req, res, next) => {
+  const solvedQuestions = await User.findById(req.params.id).select(
+    "solvedQuestions"
+  );
+  // Send response
+
+  res.status(200).json({
+    status: "success",
+    data: solvedQuestions,
+  });
+});
+
+exports.getUserTest = catchAsync(async (req, res, next) => {
+  const tests = await Test.find().select("_id name");
+  // Send response
+
+  res.status(200).json({
+    status: "success",
+    data: tests,
+  });
+});
+
 exports.getUserById = catchAsync(async (req, res, next) => {
   const inbox = await User.findById(req.params.id).select(
     "name email role photo"

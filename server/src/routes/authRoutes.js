@@ -42,10 +42,15 @@ authRouter
   .delete(userController.deleteUser);
 
 authRouter.patch("/admin/user/notify/:id", userController.notifyUser);
+authRouter.get(
+  "/api/user/solvedquestions/:id",
+  userController.getUserSolvedQues
+);
 authRouter.patch("/admin/user/task/:id", userController.sendTask);
 authRouter.patch("/api/user/role/:id", userController.updateRole);
 authRouter.get("/api/user/tasks/:id", userController.getTasks);
 authRouter.get("/api/users/inbox/:id", userController.getUser);
+authRouter.get("/api/users/getalltests", userController.getUserTest);
 
 authRouter.post("/admin/user/notifyall", userController.taskAll);
 authRouter.post("/admin/user/messageall", userController.messageAll);

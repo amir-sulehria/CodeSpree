@@ -24,7 +24,7 @@ const Navigation = () => {
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto"></Nav>
         <Nav>
-          <Nav.Link style={{ paddingRight: "1em" }} as={Link} to="/test">
+          <Nav.Link style={{ paddingRight: "1em" }} as={Link} to="/practice">
             Practice
           </Nav.Link>
           <Nav.Link style={{ paddingRight: "1em" }} as={Link} to="/rankings">

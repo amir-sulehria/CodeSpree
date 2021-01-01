@@ -1,5 +1,7 @@
 const { json } = require("express");
 const Test = require(".././model/Test");
+const Question = require(".././model/Question");
+const User = require(".././model/User");
 const catchAsync = require("./../utils/catchAsync");
 
 exports.createTest = catchAsync(async (req, res, next) => {
@@ -41,9 +43,9 @@ exports.getAllTests = catchAsync(async (req, res, next) => {
 });
 
 exports.getUpcomingTests = catchAsync(async (req, res, next) => {
-  const tests = await Test.find({ status: "upcoming" }).select(
-    "date name registeredUsers"
-  );
+  const tests = await Test.find({
+    submissionDeadline: { $gte: new Date(Date.now()) },
+  }).select("date name registeredUsers");
 
   // Send response
   res.status(200).json({
@@ -92,5 +94,32 @@ exports.testData = catchAsync(async (req, res, next) => {
     data: testData,
   });
 });
+
+exports.getTime = (req, res, next) => {
+  let date = new Date(Date.now()).toUTCString();
+  res.status(200).json({
+    status: "success",
+    data: date,
+  });
+};
+
+exports.addSolvedQues = catchAsync(async (req, res, next) => {
+  const ques = await User.findByIdAndUpdate(req.params.id, {
+    $push: { solvedQuestions: req.body.ques },
+  });
+  res.status(200).json({
+    status: "success",
+    data: ques,
+  });
+});
+
+exports.getPracticeQues = catchAsync(async (req, res, next) => {
+  const ques = await Question.find({ type: "Practice" });
+  res.status(200).json({
+    status: "success",
+    data: ques,
+  });
+});
+
 exports.updateTest = catchAsync(async (req, res, next) => {});
 exports.deleteTest = catchAsync(async (req, res, next) => {});
