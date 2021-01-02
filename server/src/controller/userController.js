@@ -4,6 +4,13 @@ const AppError = require("./../utils/appError");
 const factory = require("./handlerFactory");
 const APIFeatures = require("../utils/apiFeautures");
 const Test = require("../model/Test");
+const cloudinary = require("cloudinary").v2;
+
+cloudinary.config({
+  cloud_name: "dkal7plpv",
+  api_key: "226229283244136",
+  api_secret: "ShFpqjQd8EPon-XphWqlk7JpnQk",
+});
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -187,6 +194,25 @@ exports.getTasks = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     data: inbox,
+  });
+});
+
+exports.uploadImg = catchAsync(async (req, res, next) => {
+  const file = req.files.file;
+  const resp = await cloudinary.uploader.upload(file.tempFilePath);
+  res.status(200).json({
+    status: "success",
+    data: resp,
+  });
+});
+
+exports.updateImg = catchAsync(async (req, res, next) => {
+  const user = await User.findByIdAndUpdate(req.params.id, {
+    photo: req.body.img,
+  });
+  res.status(200).json({
+    status: "success",
+    data: user,
   });
 });
 

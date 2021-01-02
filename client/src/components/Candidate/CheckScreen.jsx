@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import Webcam from "react-webcam";
 import axios from "axios";
 
@@ -9,7 +9,10 @@ const Invigilation = () => {
   const [not, setNot] = useState("pending");
   const [storage, setStorage] = useState("pending");
   const [timeMatch, setTimeMatch] = useState("pending");
+  const [internetSpeed, setInternetSpeed] = useState("pending");
+
   const history = useHistory();
+  const { testid } = useParams();
 
   const webcamRef = useRef(null);
 
@@ -18,7 +21,8 @@ const Invigilation = () => {
       camStatus === "✔" &&
       fullScreen === "✔" &&
       not === "✔" &&
-      storage === "✔"
+      storage === "✔" &&
+      internetSpeed === "✔"
     ) {
       return true;
     } else {
@@ -28,7 +32,7 @@ const Invigilation = () => {
 
   const handleStart = () => {
     if (makeDecision() === true) {
-      history.push("/test");
+      history.push(`/test/${testid}`);
     }
   };
 
@@ -55,7 +59,20 @@ const Invigilation = () => {
     }
   };
 
-  const handleCheck = () => {
+  const handleSpeed = () => {
+    axios
+      .get("http://localhost:4000/api/test/netspeed")
+      .then((res) => {
+        if (res.data.data >= 1) {
+          setInternetSpeed("✔");
+        } else {
+          setInternetSpeed(`Slow speed ${res.data.data}`);
+        }
+      })
+      .catch((err) => alert("Check your connection"));
+  };
+
+  const handleCheck = async () => {
     var isFirefox = typeof InstallTrigger !== "undefined";
     if (!isFirefox) {
       if (
@@ -91,6 +108,7 @@ const Invigilation = () => {
       setStorage("Pending");
     }
     handleTime();
+    await handleSpeed();
     if (Notification.permission === "granted") {
       setNot("✔");
     } else {
@@ -114,6 +132,7 @@ const Invigilation = () => {
             <li>Notification {not}</li>
             <li>Storage {storage}</li>
             <li>Time Match {timeMatch}</li>
+            <li>Internet Speed {internetSpeed} (should be above 1Mbps)</li>
           </ul>
           <button onClick={handleStart}>Start</button>
           <button onClick={handleCheck}>Check</button>

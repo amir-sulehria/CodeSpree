@@ -32,6 +32,8 @@ import EditQues from "./components/Staff/EditQues";
 import EditUser from "./components/Staff/EditUser";
 import CheckScreen from "./components/Candidate/CheckScreen";
 import Practice from "./components/Candidate/Practice";
+import Results from "./components/Staff/Results";
+import CandDetails from "./components/Staff/CandDetails";
 
 const App = () => {
   return (
@@ -48,6 +50,17 @@ const App = () => {
           component={EditUser}
         />
         <AdminPrivateRoute path="/admin/test" exact component={TestData} />
+        <AdminPrivateRoute path="/result/:id" exact component={Results} />
+        <AdminPrivateRoute
+          path="/test/view/:id"
+          exact
+          component={CandDetails}
+        />
+        <AdminPrivateRoute
+          path="/admin/profile"
+          exact
+          component={(props) => <Profile {...props} role="admin" />}
+        />
         <AdminPrivateRoute
           path="/admin/test/create"
           exact
@@ -96,6 +109,11 @@ const App = () => {
           component={EditQues}
         />
         <StaffPrivateRoute path="/examiner/inbox" exact component={Inbox} />
+        <StaffPrivateRoute
+          path="/examiner/profile"
+          exact
+          component={(props) => <Profile {...props} role="staff" />}
+        />
         <TestProvider>
           <UserPrivateRoute path="/dashboard" exact component={Dashboard} />
           <UserPrivateRoute
@@ -103,12 +121,16 @@ const App = () => {
             exact
             component={(props) => <Inbox {...props} role="user" />}
           />
-          <UserPrivateRoute path="/test" exact component={Test} />
+          <UserPrivateRoute path="/test/:testid" exact component={Test} />
           <UserPrivateRoute path="/rankings" exact component={Rankings} />
-          <UserPrivateRoute path="/profile" exact component={Profile} />
+          <UserPrivateRoute
+            path="/profile"
+            exact
+            component={(props) => <Profile {...props} role="user" />}
+          />
           <UserPrivateRoute path="/practice" exact component={Practice} />
           <UserPrivateRoute
-            path="/system-check"
+            path="/system-check/:testid"
             exact
             component={CheckScreen}
           />

@@ -27,12 +27,25 @@ exports.updateSubStatus = catchAsync(async (req, res, next) => {
   submission.save();
   res.status(201).json(submission);
 });
-exports.getSubmission = catchAsync(async (req, res, next) => {});
+exports.getSubmission = catchAsync(async (req, res, next) => {
+  const submission = await Submission.findById(req.params.id).populate(
+    "userID"
+  );
+
+  res.status(201).json(submission);
+});
 
 exports.getScore = catchAsync(async (req, res, next) => {
   const submission = await Submission.findOne({
     userID: req.body.userId,
     testID: req.body.testId,
+  });
+  res.status(201).json(submission);
+});
+
+exports.cancelTest = catchAsync(async (req, res, next) => {
+  const submission = await Submission.findByIdAndUpdate(req.params.id, {
+    status: "cancelled",
   });
   res.status(201).json(submission);
 });

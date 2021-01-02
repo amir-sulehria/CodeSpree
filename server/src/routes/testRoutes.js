@@ -9,6 +9,7 @@ router.patch("/api/practice/:id", testController.addSolvedQues);
 router.route("/api/tests").get(testController.getAllTests);
 router.route("/api/servertime").get(testController.getTime);
 router.route("/api/user/upcomingtests").get(testController.getUpcomingTests);
+router.route("/api/admin/opentest/:id").patch(testController.openTest);
 
 router.patch("/api/test/:id/addquestions", testController.addQuestions);
 

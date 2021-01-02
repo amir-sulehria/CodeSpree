@@ -15,7 +15,8 @@ const ExaminerNav = () => {
       variant="dark"
     >
       <Navbar.Brand
-        href="dashboard"
+        as={Link}
+        to="/examiner/dashboard"
         style={{ fontSize: "1.5em", fontWeight: "bold", color: "white" }}
       >
         CodeSpree
@@ -37,6 +38,13 @@ const ExaminerNav = () => {
             to="/examiner/inbox"
           >
             Inbox
+          </Nav.Link>
+          <Nav.Link
+            style={{ paddingRight: "1em" }}
+            as={Link}
+            to="/examiner/profile"
+          >
+            Profile
           </Nav.Link>
           <Nav.Link
             style={{ paddingRight: "1em" }}

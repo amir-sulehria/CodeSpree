@@ -58,6 +58,8 @@ exports.signup = catchAsync(async (req, res, next) => {
   createSendToken(newUser, 201, res);
 });
 
+
+
 exports.signout = catchAsync(async (req, res, next) => {
   res.cookie("jwt", "", { maxAge: 1 });
   res.send({});
@@ -85,6 +87,7 @@ exports.login = catchAsync(async (req, res, next) => {
 exports.protect = catchAsync(async (req, res, next) => {
   const userId = req.params;
   const { authorization } = req.headers;
+
   let token;
 
   // 1) Getting token and check of it's there
@@ -103,8 +106,8 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // 3) Check if user still exists
   const currentUser = await User.findById(decoded.id);
-
-  if (!currentUser || currentUser.role != "admin") {
+  console.log(currentUser);
+  if (!currentUser) {
     return next(new AppError("You don't have permission to delete", 401));
   }
 

@@ -11,6 +11,8 @@ authRouter.post("/api/staff/signin", authController.login);
 authRouter.get("/api/users/signout", authController.signout);
 authRouter.post("/api/users/signin", authController.forgotPassword);
 authRouter.post("/api/users/signout", authController.resetPassword);
+authRouter.patch("/api/user/imgupload", userController.uploadImg);
+authRouter.patch("/api/user/img/:id", userController.updateImg);
 
 authRouter.patch(
   "/api/users/update-my-password",

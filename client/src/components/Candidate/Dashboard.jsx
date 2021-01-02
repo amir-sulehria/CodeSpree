@@ -4,7 +4,6 @@ import jwt_decode from "jwt-decode";
 import Cookie from "js-cookie";
 import HomeLayout from "../../layouts/HomeLayout";
 import { useHistory } from "react-router-dom";
-import { TestContext } from "../../contextapi/TestContext";
 
 export default function Dashboard() {
   const [tests, setTests] = useState([]);
@@ -12,19 +11,11 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [loading2, setLoading2] = useState(true);
   const [userId, setUserId] = useState();
-  const [selectedTest, setSelectedTest] = useContext(TestContext);
-
-  const getServerTime = async () => {
-    const res = await axios.get("http://localhost:4000/api/servertime");
-    let serverTime = res.data.data;
-    return serverTime;
-  };
 
   const history = useHistory();
 
   const handleStart = (id) => {
-    setSelectedTest(id);
-    history.push("/system-check");
+    history.push(`/system-check/${id}`);
   };
 
   const hanldeParticipate = (testid) => {
@@ -133,14 +124,14 @@ export default function Dashboard() {
                             >
                               Participate
                             </button>
-                          ) : (
+                          ) : d.status === "available" ? (
                             <button
                               className="btn btn-primary"
                               onClick={() => handleStart(d.id)}
                             >
                               Start
                             </button>
-                          )}
+                          ) : null}
                         </div>
                       </div>
                     </div>

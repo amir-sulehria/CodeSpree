@@ -3,11 +3,9 @@ import Editor from "@monaco-editor/react";
 import "./CodeEditor.css";
 import HomeLayout from "../../layouts/HomeLayout";
 import axios from "axios";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import Cookie from "js-cookie";
-import { TestContext } from "../../contextapi/TestContext";
-import { useContext } from "react";
 import Webcam from "react-webcam";
 import Countdown from "react-countdown";
 
@@ -33,8 +31,9 @@ export default function CodeEditor(props) {
   const [currentStart, setCurrentStart] = useState(new Date());
   const [deadline, setDeadline] = useState(new Date());
   const [currentEnd, setCurrentEnd] = useState(new Date());
-  const [selectedTest, setSelectedTest] = useContext(TestContext);
   const [obtainedScore, setObtainedScore] = useState(0);
+
+  const { testid } = useParams();
 
   //invig sys
   const handleFullScreen = () => {
@@ -60,10 +59,10 @@ export default function CodeEditor(props) {
       window.screen.height - window.innerHeight > 5
     ) {
       axios
-        .patch(
-          `http://localhost:4000/api/submission/updatestatus/${selectedTest}`,
-          { status: "violated", userId: id }
-        )
+        .patch(`http://localhost:4000/api/submission/updatestatus/${testid}`, {
+          status: "violated",
+          userId: id,
+        })
         .then((res) => history.push("/dashboard"));
     }
   };
@@ -133,7 +132,7 @@ export default function CodeEditor(props) {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:4000/api/tests/test/${selectedTest}`)
+      .get(`http://localhost:4000/api/tests/test/${testid}`)
       .then((response) => {
         setQuestions(response.data.data.questions);
         setDeadline(response.data.data.submissionDeadline);
@@ -259,7 +258,7 @@ export default function CodeEditor(props) {
     axios
       .patch(`http://localhost:4000/api/submission/addanswer`, {
         userId: id,
-        testId: selectedTest,
+        testId: testid,
         questionId: questions[0].id,
         statement: questions[0].statement,
         startedAt: currentStart,

@@ -45,6 +45,19 @@ export default function MakeTest() {
       });
   }, []);
 
+  const handleOpen = (id) => {
+    axios
+      .patch(`http://localhost:4000/api/admin/opentest/${id}`)
+      .then((res) => {
+        window.location.reload();
+      })
+      .catch((err) => alert("cannot update"));
+  };
+
+  const handleResult = (id) => {
+    history.push(`/result/${id}`);
+  };
+
   if (loading) {
     return (
       <div class="d-flex justify-content-center">
@@ -79,6 +92,7 @@ export default function MakeTest() {
                   <th scope="col">#</th>
                   <th scope="col">Name</th>
                   <th scope="col">Date</th>
+                  <th scope="col">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -88,9 +102,29 @@ export default function MakeTest() {
                       <th scope="row">{i + 1}</th>
                       <td>{d.name}</td>
                       <td>{getDate(d.date)}</td>
+                      <td>{d.status}</td>
+                      {d.status !== "upcoming" ? (
+                        <td>
+                          <button
+                            className="btn btn-sm btn-primary"
+                            onClick={() => handleResult(d.id)}
+                          >
+                            View Results
+                          </button>
+                        </td>
+                      ) : (
+                        <td>
+                          <button
+                            className="btn btn-sm btn-primary"
+                            onClick={() => handleOpen(d.id)}
+                          >
+                            Open Test
+                          </button>
+                        </td>
+                      )}
                       <td>
-                        <button className="btn btn-sm btn-primary">
-                          View Results
+                        <button className="btn btn-sm btn-danger">
+                          Delete
                         </button>
                       </td>
                     </tr>

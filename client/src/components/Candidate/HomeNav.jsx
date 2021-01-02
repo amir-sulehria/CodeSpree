@@ -15,7 +15,8 @@ const Navigation = () => {
       variant="dark"
     >
       <Navbar.Brand
-        href="/dashboard"
+        as={Link}
+        to="/dashboard"
         style={{ fontSize: "1.5em", fontWeight: "bold", color: "white" }}
       >
         CodeSpree

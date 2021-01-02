@@ -7,7 +7,7 @@ export default function AdminLayout(props) {
     <>
       <AdminNav />
       {props.children}
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }

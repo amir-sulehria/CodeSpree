@@ -45,7 +45,7 @@ exports.getAllTests = catchAsync(async (req, res, next) => {
 exports.getUpcomingTests = catchAsync(async (req, res, next) => {
   const tests = await Test.find({
     submissionDeadline: { $gte: new Date(Date.now()) },
-  }).select("date name registeredUsers");
+  }).select("date name registeredUsers status");
 
   // Send response
   res.status(200).json({
@@ -54,8 +54,19 @@ exports.getUpcomingTests = catchAsync(async (req, res, next) => {
     data: { tests },
   });
 });
+
 exports.getTest = catchAsync(async (req, res, next) => {
   const test = await Test.findById(req.params.id).populate("questions");
+  res.status(200).json({
+    status: "success",
+    data: test,
+  });
+});
+
+exports.openTest = catchAsync(async (req, res, next) => {
+  const test = await Test.findByIdAndUpdate(req.params.id, {
+    status: "available",
+  });
   res.status(200).json({
     status: "success",
     data: test,

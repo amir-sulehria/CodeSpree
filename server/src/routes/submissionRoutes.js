@@ -5,6 +5,7 @@ const router = Router();
 
 router.post("/api/submission/create", submissionController.createSubmission);
 router.patch("/api/submission/addanswer", submissionController.addAnswer);
+router.patch("/api/user/cancel/:id", submissionController.cancelTest);
 
 router.route("/api/submissions").get(submissionController.getAllSubmissions);
 router.route("/api/submission/getscore").get(submissionController.getScore);
