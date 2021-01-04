@@ -3,6 +3,8 @@ const Test = require(".././model/Test");
 const Question = require(".././model/Question");
 const User = require(".././model/User");
 const catchAsync = require("./../utils/catchAsync");
+const AppError = require("./../utils/appError");
+const Submission = require("../model/Submission");
 
 exports.createTest = catchAsync(async (req, res, next) => {
   const newTest = await Test.create(req.body);
@@ -24,8 +26,6 @@ exports.registerCandidate = catchAsync(async (req, res, next) => {
       $push: { registeredUsers: req.body.userId },
     }
   );
-  console.log(req.params.id);
-  console.log(test);
   await test.save();
 
   res.status(201).json(test);
@@ -57,10 +57,17 @@ exports.getUpcomingTests = catchAsync(async (req, res, next) => {
 
 exports.getTest = catchAsync(async (req, res, next) => {
   const test = await Test.findById(req.params.id).populate("questions");
-  res.status(200).json({
-    status: "success",
-    data: test,
-  });
+  if (
+    test.status === "available" &&
+    new Date(test.submissionDeadline) > new Date(Date.now())
+  ) {
+    res.status(200).json({
+      status: "success",
+      data: test,
+    });
+  } else {
+    return next(new AppError("This test is not available", 400));
+  }
 });
 
 exports.openTest = catchAsync(async (req, res, next) => {

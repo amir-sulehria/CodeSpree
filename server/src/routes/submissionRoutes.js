@@ -9,6 +9,7 @@ router.patch("/api/user/cancel/:id", submissionController.cancelTest);
 
 router.route("/api/submissions").get(submissionController.getAllSubmissions);
 router.route("/api/submission/getscore").get(submissionController.getScore);
+router.route("/api/submission/testimg").patch(submissionController.addImg);
 router
   .route("/api/submission/getranking/:id")
   .get(submissionController.getRanking);

@@ -50,6 +50,7 @@ export default function Results() {
                     <th scope="col">Username</th>
                     <th scope="col">Score</th>
                     <th scope="col">Status</th>
+                    <th scope="col">Identity</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -66,6 +67,7 @@ export default function Results() {
                         </td>
                         <td>{d.totalScore}</td>
                         <td>{d.status}</td>
+                        <td>{d.doubt ? "doubted" : "not doubted"}</td>
                         <button
                           classname="btn btn-sm btn-primary"
                           onClick={() => history.push(`/test/view/${d.id}`)}

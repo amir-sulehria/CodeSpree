@@ -66,6 +66,21 @@ const submissionSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    img1: {
+      type: String,
+      default:
+        "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png",
+    },
+    img2: {
+      type: String,
+      default:
+        "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png",
+    },
+    img3: {
+      type: String,
+      default:
+        "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png",
+    },
   },
 
   {
@@ -85,11 +100,15 @@ answers.pre("save", async function (next) {
     (this.submittedAt.getTime() - this.startedAt.getTime()) / 1000
   );
   // this.parent().totalScore = this.parent().totalScore + this.marksObtained;
-  if (this.status === "violated") {
-    this.status = "violated";
+  console.log("------");
+  console.log(this.parent().status);
+  if (this.parent().status === "violated") {
+    this.parent().status = "violated";
   } else {
-    this.status = "present";
+    this.parent().status = "present";
   }
+  console.log(this.parent().status);
+  console.log("------");
   next();
 });
 submissionSchema.pre("save", async function (next) {

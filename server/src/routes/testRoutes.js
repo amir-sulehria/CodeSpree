@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const testController = require("../controller/testController");
+const authController = require("../controller/authController");
 
 const router = Router();
 
@@ -21,7 +22,7 @@ router.patch("/api/test/register/:id", testController.registerCandidate);
 
 router
   .route("/api/tests/test/:id")
-  .get(testController.getTest)
+  .get(authController.protect, testController.getTest)
   .patch(testController.updateTest)
   .delete(testController.deleteTest);
 

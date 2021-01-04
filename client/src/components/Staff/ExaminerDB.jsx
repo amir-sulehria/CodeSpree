@@ -53,17 +53,25 @@ export default function Dashboard() {
       .then((data) => {
         if (data.length > 1) {
           setTotal(data.length);
+          let v1 = 0;
+          let v2 = 0;
+          let v3 = 0;
+          let v4 = 0;
           data.map((d, i) => {
             if (d.category === "Data Structure") {
-              setDataStr(dataStr + 1);
+              v1 = v1 + 1;
             } else if (d.category === "Problem Solving") {
-              setProb(prob + 1);
+              v2 = v2 + 1;
             } else if (d.category === "General") {
-              setGen(gen + 1);
+              v3 = v3 + 1;
             } else if (d.category === "Algorithm") {
-              setAlgo(algo + 1);
+              v4 = v4 + 1;
             }
           });
+          setDataStr(v1);
+          setProb(v2);
+          setGen(v3);
+          setAlgo(v4);
           setLoading2(false);
         } else {
           setLoading2(false);
