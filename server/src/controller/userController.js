@@ -5,11 +5,14 @@ const factory = require("./handlerFactory");
 const APIFeatures = require("../utils/apiFeautures");
 const Test = require("../model/Test");
 const cloudinary = require("cloudinary").v2;
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 cloudinary.config({
-  cloud_name: "dkal7plpv",
-  api_key: "226229283244136",
-  api_secret: "ShFpqjQd8EPon-XphWqlk7JpnQk",
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
 });
 
 const filterObj = (obj, ...allowedFields) => {
