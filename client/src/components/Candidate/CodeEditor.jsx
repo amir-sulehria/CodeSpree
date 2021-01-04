@@ -132,11 +132,6 @@ export default function CodeEditor(props) {
     return a;
   };
 
-  const handleTest = () => {
-    const img = handleCam();
-    console.log(img);
-  };
-
   useEffect(() => {
     const token = Cookie.get("token");
 
@@ -350,10 +345,6 @@ export default function CodeEditor(props) {
       });
   };
 
-  const handleCheck = () => {
-    alert(Math.ceil((currentEnd.getTime() - currentStart.getTime()) / 1000));
-  };
-
   const handleRun = async () => {
     let url = "http://localhost:4000/api/run";
     let data = {
@@ -418,9 +409,6 @@ export default function CodeEditor(props) {
               <hr /> {">>>"}
               <p>{output}</p>
               <label htmlFor="lang">Choose Lang</label>
-              <br />
-              <h5>Sample Input: {questions[0].sampleIn}</h5>
-              <h5>Sample Output: {questions[0].sampleOut}</h5>
               <select
                 name="lang"
                 id="lang"
@@ -432,6 +420,9 @@ export default function CodeEditor(props) {
                 <option value="java">java</option>
                 <option value="c">c</option>
               </select>
+              <br />
+              <h5>Sample Input: {questions[0].sampleIn}</h5>
+              <h5>Sample Output: {questions[0].sampleOut}</h5>
             </div>
           </div>
           <br />
@@ -448,28 +439,10 @@ export default function CodeEditor(props) {
             <div className="col-md-1">
               <button
                 className="btn btn-lg btn-success"
-                onClick={handleTest}
-                disabled={!isEditorReady}
-              >
-                Test
-              </button>
-            </div>
-            <div className="col-md-1">
-              <button
-                className="btn btn-lg btn-success"
                 onClick={handleSubmit}
                 disabled={!isEditorReady}
               >
                 Submit
-              </button>
-            </div>
-            <div className="col-md-1">
-              <button
-                className="btn btn-lg btn-success"
-                onClick={getLines}
-                disabled={!isEditorReady}
-              >
-                Check
               </button>
             </div>
           </div>
